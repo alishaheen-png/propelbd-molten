@@ -9,14 +9,14 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // PropelBD navy/blue kinetic — NOT gold
         base: {
           DEFAULT: "#0A1422",
-          deep: "#08101F",
+          deep: "#050C18",
           door: "#061029",
         },
         surface: {
-          DEFAULT: "#111D2C",
+          DEFAULT: "#0E1726",
+          elevated: "#162238",
           soft: "#0E1829",
           muted: "#142338",
           door: "#0B1A3A",
@@ -28,7 +28,7 @@ const config: Config = {
           light: "#5E8BFF",
         },
         ink: {
-          DEFAULT: "#F4F6F9",
+          DEFAULT: "#F4F6FA",
           soft: "#F0F4FA",
           door: "#F4F7FC",
         },
@@ -47,13 +47,14 @@ const config: Config = {
         mono: ["var(--font-jetbrains)", "monospace"],
       },
       fontSize: {
-        "hero": ["clamp(3rem, 8vw, 7rem)", { lineHeight: "0.95", letterSpacing: "-0.03em" }],
-        "hero-sm": ["clamp(2.5rem, 7vw, 5rem)", { lineHeight: "0.95", letterSpacing: "-0.03em" }],
-        "display": ["clamp(2rem, 4vw, 3.5rem)", { lineHeight: "1.05", letterSpacing: "-0.02em" }],
+        "hero": ["clamp(3rem, 9vw, 8rem)", { lineHeight: "0.98", letterSpacing: "-0.02em" }],
+        "hero-sm": ["clamp(2.5rem, 7vw, 5.5rem)", { lineHeight: "0.98", letterSpacing: "-0.02em" }],
+        "display": ["clamp(2.25rem, 4.5vw, 4rem)", { lineHeight: "1.05", letterSpacing: "-0.02em" }],
+        "index": ["clamp(4rem, 12vw, 10rem)", { lineHeight: "0.85", letterSpacing: "-0.03em" }],
       },
       spacing: {
-        "section": "clamp(4rem, 10vw, 8rem)",
-        "section-lg": "clamp(6rem, 14vw, 12rem)",
+        "section": "clamp(5rem, 12vw, 10rem)",
+        "section-lg": "clamp(7rem, 16vw, 14rem)",
       },
       borderRadius: {
         "editorial": "2px",

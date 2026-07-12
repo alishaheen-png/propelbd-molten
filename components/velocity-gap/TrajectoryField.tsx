@@ -3,12 +3,12 @@
 import { useEffect, useRef } from "react";
 
 const nodes = [
-  { name: "DIFC", x: 0.25, y: 0.35 },
-  { name: "ADGM", x: 0.72, y: 0.28 },
-  { name: "Dubai Internet City", x: 0.35, y: 0.65 },
-  { name: "Abu Dhabi Global Market", x: 0.78, y: 0.62 },
-  { name: "DMCC", x: 0.15, y: 0.55 },
-  { name: "Masdar City", x: 0.58, y: 0.48 },
+  { name: "DIFC", x: 0.22, y: 0.32 },
+  { name: "ADGM", x: 0.74, y: 0.26 },
+  { name: "DIC", x: 0.32, y: 0.62 },
+  { name: "ADGM", x: 0.78, y: 0.58 },
+  { name: "DMCC", x: 0.14, y: 0.52 },
+  { name: "Masdar", x: 0.56, y: 0.46 },
 ];
 
 export function TrajectoryField() {
@@ -34,12 +34,27 @@ export function TrajectoryField() {
     const draw = () => {
       const rect = canvas.getBoundingClientRect();
       ctx.clearRect(0, 0, rect.width, rect.height);
-
       const w = rect.width;
       const h = rect.height;
 
-      // Draw connections
+      // Subtle grid
+      ctx.strokeStyle = "rgba(35, 87, 196, 0.06)";
       ctx.lineWidth = 1;
+      for (let x = 0; x < w; x += 40) {
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, h);
+        ctx.stroke();
+      }
+      for (let y = 0; y < h; y += 40) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(w, y);
+        ctx.stroke();
+      }
+
+      // Connections
+      ctx.lineWidth = 1.5;
       nodes.forEach((a, i) => {
         nodes.forEach((b, j) => {
           if (j <= i) return;
@@ -48,9 +63,9 @@ export function TrajectoryField() {
           const bx = b.x * w;
           const by = b.y * h;
           const dist = Math.hypot(bx - ax, by - ay);
-          if (dist < w * 0.55) {
-            const alpha = 0.08 + 0.12 * Math.sin(time * 0.001 + i + j);
-            ctx.strokeStyle = `rgba(35, 87, 196, ${alpha})`;
+          if (dist < w * 0.65) {
+            const alpha = 0.15 + 0.2 * Math.sin(time * 0.001 + i + j);
+            ctx.strokeStyle = `rgba(35, 87, 196, ${Math.max(0.1, alpha)})`;
             ctx.beginPath();
             ctx.moveTo(ax, ay);
             ctx.lineTo(bx, by);
@@ -59,23 +74,23 @@ export function TrajectoryField() {
         });
       });
 
-      // Draw nodes
+      // Nodes
       nodes.forEach((node, i) => {
         const x = node.x * w;
         const y = node.y * h;
-        const pulse = 1 + 0.15 * Math.sin(time * 0.002 + i * 1.5);
+        const pulse = 1 + 0.18 * Math.sin(time * 0.002 + i * 1.5);
 
-        ctx.fillStyle = "rgba(35, 87, 196, 0.15)";
+        ctx.fillStyle = "rgba(35, 87, 196, 0.2)";
         ctx.beginPath();
-        ctx.arc(x, y, 6 * pulse, 0, Math.PI * 2);
+        ctx.arc(x, y, 7 * pulse, 0, Math.PI * 2);
         ctx.fill();
 
-        ctx.fillStyle = "#2357C4";
+        ctx.fillStyle = "#4A7FD9";
         ctx.beginPath();
-        ctx.arc(x, y, 2.5, 0, Math.PI * 2);
+        ctx.arc(x, y, 3, 0, Math.PI * 2);
         ctx.fill();
 
-        ctx.fillStyle = "rgba(244, 246, 249, 0.5)";
+        ctx.fillStyle = "rgba(244, 246, 250, 0.6)";
         ctx.font = "500 11px var(--font-jetbrains)";
         ctx.fillText(node.name, x + 12, y + 4);
       });

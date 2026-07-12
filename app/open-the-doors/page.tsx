@@ -13,7 +13,7 @@ export default function OpenTheDoorsPage() {
   return (
     <>
       <Nav ctaHref="#contact" ctaText="Show us the deal" />
-      <main className="bg-base-door text-ink-door pt-16">
+      <main className="bg-base-deep text-ink pt-16 md:pt-20">
         <OpenTheDoorsContent />
       </main>
       <Footer />
