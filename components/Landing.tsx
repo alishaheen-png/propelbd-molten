@@ -217,13 +217,19 @@ export default function Landing() {
             targeting, and the corporate-membership pipeline — and the meetings started
             landing. The same playbook we install for you.
           </p>
-          <div data-reveal className="mt-10 flex flex-wrap gap-3">
-            {["Outbound engine, built", "Corporate pipeline, live", "Meetings booked with buyers"].map((t) => (
-              <span key={t} className="border border-[#26262A] px-4 py-2 font-mono text-[12px] uppercase tracking-[0.14em] text-[#B8B6AE]">{t}</span>
+          <div data-reveal className="mt-12 grid gap-px overflow-hidden border border-[#1C1C1F] bg-[#1C1C1F] sm:grid-cols-3">
+            {[
+              ["16", "corporate targets engaged across the Gulf"],
+              ["1st", "corporate membership deal closed"],
+              ["300+", "verified decision-makers surfaced"],
+            ].map(([n, d]) => (
+              <div key={n} className="bg-[#0B0B0C] p-7">
+                <div className="font-display text-4xl font-bold tracking-tight md:text-5xl" style={{ color: ACCENT }}>{n}</div>
+                <p className="mt-3 text-[13.5px] leading-relaxed text-[#9A988F]">{d}</p>
+              </div>
             ))}
           </div>
           <p data-reveal className="mt-6 font-mono text-[11px] uppercase tracking-[0.18em] text-[#6E6D67]">
-            {/* real metrics + attributed quote slot in once SCME signs off */}
             Anchor client · full case detail on request
           </p>
         </section>
