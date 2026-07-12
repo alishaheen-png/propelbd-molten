@@ -64,9 +64,13 @@ export default function Landing() {
           scrollTrigger: { trigger: root.current, start: "top top", end: "bottom bottom", scrub: 0.6 },
         });
       }
-      // thread nodes ignite as the spine passes
+      // thread nodes ignite as the spine passes (real molten dots, not SVG-fill-on-span)
       gsap.utils.toArray<HTMLElement>(".node").forEach((n) => {
-        gsap.to(n, { fill: ACCENT, opacity: 1, boxShadow: "0 0 12px #FF5A1F", scrollTrigger: { trigger: n.dataset.at || root.current, start: "top 62%", toggleActions: "play none none reverse" } });
+        gsap.to(n, {
+          backgroundColor: ACCENT, scale: 1.4, boxShadow: "0 0 16px rgba(255,90,31,0.9)",
+          duration: 0.4, ease: "power2.out",
+          scrollTrigger: { trigger: n.dataset.at || root.current, start: "top 70%", toggleActions: "play none none reverse" },
+        });
       });
 
       // section reveals (GSAP vocab, not IntersectionObserver)
@@ -143,7 +147,7 @@ export default function Landing() {
 
         {/* PROBLEM (new) */}
         <section className="py-24 md:py-32">
-          <span className="node" data-at="#problem-h" /><div data-reveal><Label>01 — The problem</Label></div>
+          <span className="node mb-5 block h-2.5 w-2.5 rounded-full bg-[#3A2A20]" data-at="#problem-h" /><div data-reveal><Label>01 — The problem</Label></div>
           <h2 id="problem-h" data-reveal className="mt-6 max-w-[18ch] font-display font-bold leading-[1.02] tracking-[-0.02em]" style={{ fontSize: "clamp(2rem, 5vw, 3.6rem)" }}>
             Your pipeline runs on <span className="text-[#6E6D67]">referrals and luck.</span>
           </h2>
@@ -165,7 +169,7 @@ export default function Landing() {
 
         {/* ENGINE (new — show the product) */}
         <section className="py-24 md:py-32">
-          <span className="node" data-at="#engine-h" /><div data-reveal><Label>02 — The engine</Label></div>
+          <span className="node mb-5 block h-2.5 w-2.5 rounded-full bg-[#3A2A20]" data-at="#engine-h" /><div data-reveal><Label>02 — The engine</Label></div>
           <h2 id="engine-h" data-reveal className="mt-6 max-w-[20ch] font-display font-bold leading-[1.02] tracking-[-0.02em]" style={{ fontSize: "clamp(2rem, 5vw, 3.6rem)" }}>
             One system. <span style={{ color: ACCENT }}>Five moving parts.</span>
           </h2>
@@ -190,7 +194,7 @@ export default function Landing() {
 
         {/* WEDGE (fixed — accountability, not comp-model) */}
         <section id="how" className="py-24 md:py-32">
-          <span className="node" data-at="#wedge-h" /><div data-reveal><Label>03 — Why us</Label></div>
+          <span className="node mb-5 block h-2.5 w-2.5 rounded-full bg-[#3A2A20]" data-at="#wedge-h" /><div data-reveal><Label>03 — Why us</Label></div>
           <div id="wedge-h" className="mt-10 space-y-6 md:space-y-8">
             {[
               ["Agencies report hours.", "We report pipeline."],
@@ -208,7 +212,7 @@ export default function Landing() {
 
         {/* PROOF (SupperClub — real framing, NO fabricated quote) */}
         <section className="py-24 md:py-32">
-          <span className="node" data-at="#proof-h" /><div data-reveal><Label>04 — Proof</Label></div>
+          <span className="node mb-5 block h-2.5 w-2.5 rounded-full bg-[#3A2A20]" data-at="#proof-h" /><div data-reveal><Label>04 — Proof</Label></div>
           <h2 id="proof-h" data-reveal className="mt-6 font-display font-bold leading-[1.02] tracking-[-0.02em]" style={{ fontSize: "clamp(2rem, 4.6vw, 3.4rem)" }}>
             We built the engine for <span style={{ color: ACCENT }}>SupperClub</span>.
           </h2>
@@ -238,7 +242,7 @@ export default function Landing() {
 
         {/* WHO */}
         <section className="py-24 md:py-32">
-          <span className="node" data-at="#who-h" /><div data-reveal><Label>05 — Who it’s for</Label></div>
+          <span className="node mb-5 block h-2.5 w-2.5 rounded-full bg-[#3A2A20]" data-at="#who-h" /><div data-reveal><Label>05 — Who it’s for</Label></div>
           <h2 id="who-h" data-reveal className="mt-6 max-w-[24ch] font-display font-bold leading-[1.02] tracking-[-0.02em]" style={{ fontSize: "clamp(2rem, 5vw, 3.6rem)" }}>
             UAE companies <span className="text-[#6E6D67]">behind on AI.</span>
           </h2>
@@ -260,7 +264,7 @@ export default function Landing() {
 
         {/* FOUNDER (new — a human for the trust buy) */}
         <section className="py-24 md:py-32">
-          <span className="node" data-at="#founder-h" /><div data-reveal><Label>06 — Who builds it</Label></div>
+          <span className="node mb-5 block h-2.5 w-2.5 rounded-full bg-[#3A2A20]" data-at="#founder-h" /><div data-reveal><Label>06 — Who builds it</Label></div>
           <div className="mt-10 grid gap-10 md:grid-cols-[auto_1fr] md:items-center md:gap-14">
             <div data-reveal className="flex h-28 w-28 items-center justify-center border border-[#26262A] font-display text-3xl font-bold text-[#6E6D67]">AS</div>
             <div data-reveal>

@@ -26,6 +26,7 @@ const jetbrains = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://propelbd.com"),
   title: "PropelBD — Fractional Business Development",
   description: "Revenue is a system. We run it. Fractional BD for founders in Dubai and Abu Dhabi.",
   openGraph: {
