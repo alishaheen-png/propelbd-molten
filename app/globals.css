@@ -11,14 +11,10 @@
   --radius-editorial: 2px;
 }
 
-html {
-  scroll-behavior: smooth;
-}
-
 body {
   font-family: var(--font-body-stack);
-  background-color: #0A1422;
-  color: #F4F6FA;
+  background-color: #0B0B0C;
+  color: #ECEAE3;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: left;
@@ -29,8 +25,15 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 ::selection {
-  background-color: rgba(35, 87, 196, 0.35);
-  color: #F4F6FA;
+  background-color: rgba(255, 90, 31, 0.35);
+  color: #ECEAE3;
+}
+
+a:focus-visible,
+button:focus-visible {
+  outline: 2px solid #FF5A1F;
+  outline-offset: 3px;
+  border-radius: 1px;
 }
 
 @layer utilities {

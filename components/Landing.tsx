@@ -43,7 +43,7 @@ export default function Landing() {
       }
 
       // Lenis smooth scroll wired into ScrollTrigger
-      const lenis = new Lenis({ duration: 1.1, smoothWheel: true });
+      const lenis = new Lenis({ duration: 1.1, smoothWheel: true, anchors: true });
       lenis.on("scroll", ScrollTrigger.update);
       const ticker = (t: number) => lenis.raf(t * 1000);
       gsap.ticker.add(ticker);
@@ -81,6 +81,18 @@ export default function Landing() {
         });
       });
 
+      // CTA molten pulse when the close scrolls in (Fable P1-11)
+      const cta = root.current?.querySelector<HTMLElement>("#contact a");
+      if (cta) {
+        gsap.to(cta, {
+          boxShadow: "0 0 34px rgba(255,90,31,0.35)", repeat: -1, yoyo: true, duration: 2.5, ease: "sine.inOut",
+          scrollTrigger: { trigger: "#contact", start: "top 70%" },
+        });
+      }
+
+      // self-hosted variable fonts shift section heights after triggers measure
+      document.fonts?.ready.then(() => ScrollTrigger.refresh());
+
       return () => {
         gsap.ticker.remove(ticker);
         lenis.destroy();
@@ -99,7 +111,7 @@ export default function Landing() {
         style={{ background: "radial-gradient(120% 70% at 82% -8%, rgba(255,90,31,0.11), transparent 55%)" }} />
 
       {/* THE MOLTEN THREAD — fixed spine, drawn by scroll */}
-      <svg aria-hidden className="pointer-events-none fixed left-3 top-0 z-20 hidden h-screen w-[64px] md:block" viewBox="0 0 64 1000" preserveAspectRatio="none">
+      <svg aria-hidden className="pointer-events-none fixed left-[max(0.75rem,calc(50%-590px))] top-0 z-20 hidden h-screen w-[64px] md:block" viewBox="0 0 64 1000" preserveAspectRatio="none">
         <defs>
           <filter id="glow" x="-60%" y="-60%" width="220%" height="220%">
             <feGaussianBlur stdDeviation="3.2" result="b" />
@@ -125,7 +137,7 @@ export default function Landing() {
 
       <main id="top" className="relative z-10 mx-auto max-w-[1180px] px-5 md:px-8 md:pl-24">
         {/* HERO */}
-        <section className="flex min-h-[92vh] flex-col justify-center pt-28 pb-16">
+        <section className="flex min-h-[92dvh] flex-col justify-center pt-28 pb-16">
           <div data-hero><Label>Fractional AI-BD · Dubai · Abu Dhabi</Label></div>
           <h1 data-hero className="mt-6 font-display font-bold leading-[0.95] tracking-[-0.02em]" style={{ fontSize: "clamp(2.7rem, 8vw, 6.6rem)" }}>
             The revenue engine<br />your business is<br /><span className="ignite">missing.</span>
@@ -139,7 +151,7 @@ export default function Landing() {
             <a href="#contact" className="inline-flex items-center gap-2 px-6 py-3.5 font-mono text-[13px] uppercase tracking-[0.14em] text-[#0B0B0C] transition-transform duration-200 hover:-translate-y-0.5 cursor-pointer" style={{ backgroundColor: ACCENT }}>
               Book a revenue teardown →
             </a>
-            <a href="#how" className="font-mono text-[13px] uppercase tracking-[0.14em] text-[#8B8A83] underline-offset-4 hover:text-[#ECEAE3] hover:underline cursor-pointer">See how it works</a>
+            <a href="#how" className="font-mono text-[13px] uppercase tracking-[0.14em] text-[#8B8A83] underline-offset-4 hover:text-[#ECEAE3] hover:underline cursor-pointer">See the engine</a>
           </div>
         </section>
 
@@ -155,7 +167,7 @@ export default function Landing() {
             {[
               ["No system", "New business shows up when someone remembers you. There’s no engine underneath it."],
               ["Behind on AI", "The tools that could find and warm your next 100 buyers exist — you just haven’t deployed them."],
-              ["No time to build", "You could figure it out. But you’re running the business, not building a growth machine."],
+              ["No time to build", "You could figure it out. But you’re running the business, not building a revenue engine."],
             ].map(([t, d], i) => (
               <div key={i} data-reveal>
                 <div className="font-mono text-[12px] uppercase tracking-[0.18em] text-[#8B8A83]">{t}</div>
@@ -199,7 +211,7 @@ export default function Landing() {
             {[
               ["Agencies report hours.", "We report pipeline."],
               ["We’re not measured on decks —", "we’re measured on meetings that land."],
-              ["Your growth", "is the only scoreboard."],
+              ["Your revenue", "is the only scoreboard."],
             ].map(([a, b], i) => (
               <p key={i} data-reveal className="font-display font-semibold leading-[1.05] tracking-[-0.015em]" style={{ fontSize: "clamp(1.8rem, 4.4vw, 3.4rem)" }}>
                 <span className="text-[#6E6D67]">{a}</span> <span className="text-[#ECEAE3]">{b}</span>
@@ -223,7 +235,7 @@ export default function Landing() {
           </p>
           <div data-reveal className="mt-12 grid gap-px overflow-hidden border border-[#1C1C1F] bg-[#1C1C1F] sm:grid-cols-3">
             {[
-              ["16", "corporate targets engaged across the Gulf"],
+              ["16", "corporate targets in live pipeline"],
               ["1st", "corporate membership deal closed"],
               ["300+", "verified decision-makers surfaced"],
             ].map(([n, d]) => (
@@ -249,7 +261,7 @@ export default function Landing() {
           <div className="mt-12 grid gap-8 md:grid-cols-3">
             {[
               ["You’re in", "Real revenue, real customers, a business worth scaling — but the pipeline still runs on referrals.", ACCENT],
-              ["You know", "AI could transform how you find and close business. You just don’t have the system, or the time to build it.", ACCENT],
+              ["You know", "AI could find and warm buyers you don’t reach today. You just don’t have the system, or the time to build it.", ACCENT],
               ["You’re not", "A funded AI-native startup that already lives in this world. That’s not who we’re for.", "#6E6D67"],
             ].map(([t, d, c], i) => (
               <div key={i} data-reveal>
