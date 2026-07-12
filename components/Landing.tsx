@@ -149,7 +149,7 @@ export default function Landing() {
           </p>
           <div data-hero className="mt-10 flex flex-wrap items-center gap-4">
             <a href="#contact" className="inline-flex items-center gap-2 px-6 py-3.5 font-mono text-[13px] uppercase tracking-[0.14em] text-[#0B0B0C] transition-transform duration-200 hover:-translate-y-0.5 cursor-pointer" style={{ backgroundColor: ACCENT }}>
-              Book a revenue teardown →
+              Book a free revenue teardown →
             </a>
             <a href="#how" className="font-mono text-[13px] uppercase tracking-[0.14em] text-[#8B8A83] underline-offset-4 hover:text-[#ECEAE3] hover:underline cursor-pointer">See the engine</a>
           </div>
@@ -306,11 +306,11 @@ export default function Landing() {
               Let’s build your <span style={{ color: ACCENT }}>engine.</span>
             </h2>
             <p className="mt-6 max-w-[44ch] text-[17px] leading-relaxed text-[#B8B6AE]">
-              A short, specific conversation about where your revenue is leaking and what
-              we’d build first. No deck. No pitch theater.
+              A 20-minute call to find where your revenue is leaking and what we’d build
+              first. No deck. No pitch theater.
             </p>
             <a href="mailto:alishaheen@supperclubme.com?subject=PropelBD%20%E2%80%94%20Revenue%20teardown" className="mt-10 inline-flex items-center gap-2 px-7 py-4 font-mono text-[13px] uppercase tracking-[0.14em] text-[#0B0B0C] transition-transform duration-200 hover:-translate-y-0.5 cursor-pointer" style={{ backgroundColor: ACCENT }}>
-              Book a revenue teardown →
+              Book a free revenue teardown →
             </a>
           </div>
         </section>
