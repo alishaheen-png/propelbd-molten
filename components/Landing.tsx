@@ -163,15 +163,16 @@ export default function Landing() {
           <h2 id="problem-h" data-reveal className="mt-6 max-w-[18ch] font-display font-bold leading-[1.02] tracking-[-0.02em]" style={{ fontSize: "clamp(2rem, 5vw, 3.6rem)" }}>
             Your pipeline runs on <span className="text-[#6E6D67]">referrals and luck.</span>
           </h2>
-          <div className="mt-12 grid gap-8 md:grid-cols-3">
+          <div className="mt-12 border-t border-[#1C1C1F]">
             {[
               ["No system", "New business shows up when someone remembers you. There’s no engine underneath it."],
               ["Behind on AI", "The tools that could find and warm your next 100 buyers exist — you just haven’t deployed them."],
               ["No time to build", "You could figure it out. But you’re running the business, not building a revenue engine."],
             ].map(([t, d], i) => (
-              <div key={i} data-reveal>
-                <div className="font-mono text-[12px] uppercase tracking-[0.18em] text-[#8B8A83]">{t}</div>
-                <p className="mt-3 text-[15px] leading-relaxed text-[#B8B6AE]">{d}</p>
+              <div key={i} data-reveal className="grid grid-cols-[auto_1fr] items-baseline gap-x-6 gap-y-2 border-b border-[#1C1C1F] py-7 md:grid-cols-[3.5rem_15rem_1fr] md:gap-x-10 md:py-9">
+                <div className="font-mono text-[13px] text-[#6E6D67]">{String(i + 1).padStart(2, "0")}</div>
+                <div className="font-display text-lg font-semibold tracking-tight md:text-xl">{t}</div>
+                <p className="col-start-2 text-[15px] leading-relaxed text-[#B8B6AE] md:col-start-3 md:text-[15.5px]">{d}</p>
               </div>
             ))}
           </div>
@@ -237,7 +238,7 @@ export default function Landing() {
             {[
               ["16", "corporate targets in live pipeline"],
               ["1st", "corporate membership deal closed"],
-              ["300+", "verified decision-makers surfaced"],
+              ["321", "verified decision-makers surfaced"],
             ].map(([n, d]) => (
               <div key={n} className="bg-[#0B0B0C] p-7">
                 <div className="font-display text-4xl font-bold tracking-tight md:text-5xl" style={{ color: ACCENT }}>{n}</div>
@@ -258,17 +259,22 @@ export default function Landing() {
           <h2 id="who-h" data-reveal className="mt-6 max-w-[24ch] font-display font-bold leading-[1.02] tracking-[-0.02em]" style={{ fontSize: "clamp(2rem, 5vw, 3.6rem)" }}>
             UAE companies <span className="text-[#6E6D67]">behind on AI.</span>
           </h2>
-          <div className="mt-12 grid gap-8 md:grid-cols-3">
+          <div className="mt-12 grid gap-8 md:grid-cols-2">
             {[
-              ["You’re in", "Real revenue, real customers, a business worth scaling — but the pipeline still runs on referrals.", ACCENT],
-              ["You know", "AI could find and warm buyers you don’t reach today. You just don’t have the system, or the time to build it.", ACCENT],
-              ["You’re not", "A funded AI-native startup that already lives in this world. That’s not who we’re for.", "#6E6D67"],
-            ].map(([t, d, c], i) => (
+              ["You’re in", "Real revenue, real customers, a business worth scaling — but the pipeline still runs on referrals."],
+              ["You know", "AI could find and warm buyers you don’t reach today. You just don’t have the system, or the time to build it."],
+            ].map(([t, d], i) => (
               <div key={i} data-reveal>
-                <div className="font-mono text-[12px] uppercase tracking-[0.18em]" style={{ color: c as string }}>{t}</div>
+                <div className="font-mono text-[12px] uppercase tracking-[0.18em]" style={{ color: ACCENT }}>{t}</div>
                 <p className="mt-4 text-[15px] leading-relaxed text-[#B8B6AE]">{d}</p>
               </div>
             ))}
+          </div>
+          <div data-reveal className="mt-8 flex flex-col gap-2 border-t border-[#1C1C1F] pt-8 md:flex-row md:items-baseline md:gap-10">
+            <div className="shrink-0 font-mono text-[12px] uppercase tracking-[0.18em] text-[#8B8A83]">Not for you</div>
+            <p className="max-w-[60ch] text-[15px] leading-relaxed text-[#8B8A83]">
+              A funded AI-native startup that already lives in this world. That’s not who we’re for.
+            </p>
           </div>
         </section>
 
@@ -300,7 +306,7 @@ export default function Landing() {
               A short, specific conversation about where your revenue is leaking and what
               we’d build first. No deck. No pitch theater.
             </p>
-            <a href="mailto:ali@propelbd.com?subject=Revenue%20teardown" className="mt-10 inline-flex items-center gap-2 px-7 py-4 font-mono text-[13px] uppercase tracking-[0.14em] text-[#0B0B0C] transition-transform duration-200 hover:-translate-y-0.5 cursor-pointer" style={{ backgroundColor: ACCENT }}>
+            <a href="mailto:alishaheen@supperclubme.com?subject=PropelBD%20%E2%80%94%20Revenue%20teardown" className="mt-10 inline-flex items-center gap-2 px-7 py-4 font-mono text-[13px] uppercase tracking-[0.14em] text-[#0B0B0C] transition-transform duration-200 hover:-translate-y-0.5 cursor-pointer" style={{ backgroundColor: ACCENT }}>
               Book a revenue teardown →
             </a>
           </div>
