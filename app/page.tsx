@@ -1,35 +1,25 @@
-import { Nav } from "@/components/shared/Nav";
-import { Footer } from "@/components/shared/Footer";
-import { DealRoomContent } from "@/components/deal-room/DealRoomContent";
 import type { Metadata } from "next";
+import Landing from "@/components/Landing";
 
 export const metadata: Metadata = {
-  title: "PropelBD — Revenue is a system. We run it.",
+  title: "PropelBD — The revenue engine your business is missing.",
   description:
-    "Fractional business development for founders in Dubai and Abu Dhabi. No full-time hires. No deck theater. Just meetings with buyers who can sign.",
+    "PropelBD installs the AI-powered business-development engine for UAE companies behind on AI. Built, proven, then scaled. We sell results, not deliverables.",
   alternates: { canonical: "/" },
   openGraph: {
-    title: "PropelBD — Revenue is a system. We run it.",
+    title: "PropelBD — The revenue engine your business is missing.",
     description:
-      "Fractional BD for founders in Dubai and Abu Dhabi. Meetings with buyers who can sign.",
+      "AI-powered business development for UAE companies behind on AI. Built, proven, scaled.",
     type: "website",
+    locale: "en_AE",
   },
   twitter: {
     card: "summary_large_image",
-    title: "PropelBD — Revenue is a system. We run it.",
-    description:
-      "Fractional BD for founders in Dubai and Abu Dhabi. Meetings with buyers who can sign.",
+    title: "PropelBD — The revenue engine your business is missing.",
+    description: "AI-powered business development for UAE companies behind on AI.",
   },
 };
 
 export default function Home() {
-  return (
-    <>
-      <Nav ctaHref="#contact" ctaText="Show me the pipeline" />
-      <main className="bg-base-deep text-ink pt-16 md:pt-20">
-        <DealRoomContent />
-      </main>
-      <Footer />
-    </>
-  );
+  return <Landing />;
 }
