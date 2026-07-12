@@ -42,8 +42,8 @@ const config: Config = {
         },
       },
       fontFamily: {
-        display: ["var(--font-bricolage)", "system-ui", "sans-serif"],
-        body: ["var(--font-bricolage)", "system-ui", "sans-serif"],
+        display: ["var(--font-display)", "Cabinet Grotesk", "system-ui", "sans-serif"],
+        body: ["var(--font-body)", "General Sans", "system-ui", "sans-serif"],
         mono: ["var(--font-jetbrains)", "monospace"],
       },
       fontSize: {

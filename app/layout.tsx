@@ -1,12 +1,21 @@
 import type { Metadata } from "next";
-import { Bricolage_Grotesque, JetBrains_Mono } from "next/font/google";
+import localFont from "next/font/local";
+import { JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 
-const bricolage = Bricolage_Grotesque({
-  subsets: ["latin"],
-  variable: "--font-bricolage",
+// Self-hosted per V3_AUTOPSY #4 (kill the single generic web-font look).
+const cabinet = localFont({
+  src: "../public/fonts/CabinetGrotesk-Variable.woff2",
+  variable: "--font-display",
   display: "swap",
-  weight: ["300", "400", "500", "600", "700"],
+  weight: "100 900",
+});
+
+const generalSans = localFont({
+  src: "../public/fonts/GeneralSans-Variable.woff2",
+  variable: "--font-body",
+  display: "swap",
+  weight: "200 700",
 });
 
 const jetbrains = JetBrains_Mono({
@@ -41,7 +50,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${bricolage.variable} ${jetbrains.variable}`}>
+    <html lang="en" className={`${cabinet.variable} ${generalSans.variable} ${jetbrains.variable}`}>
       <body className="antialiased">{children}</body>
     </html>
   );

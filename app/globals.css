@@ -3,8 +3,11 @@
 @tailwind utilities;
 
 :root {
-  --font-bricolage: "Bricolage Grotesk", system-ui, sans-serif;
-  --font-jetbrains: "JetBrains Mono", monospace;
+  /* self-hosted per V3_AUTOPSY #4: display=Cabinet Grotesk, body=General Sans.
+     next/font sets --font-display / --font-body / --font-jetbrains on <html>. */
+  --font-display-stack: var(--font-display), "Cabinet Grotesk", system-ui, sans-serif;
+  --font-body-stack: var(--font-body), "General Sans", system-ui, sans-serif;
+  --font-bricolage: var(--font-display), "Cabinet Grotesk", system-ui, sans-serif; /* legacy alias -> Cabinet */
   --radius-editorial: 2px;
 }
 
@@ -13,12 +16,16 @@ html {
 }
 
 body {
-  font-family: var(--font-bricolage);
+  font-family: var(--font-body-stack);
   background-color: #0A1422;
   color: #F4F6FA;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: left;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display-stack);
 }
 
 ::selection {
