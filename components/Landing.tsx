@@ -1,39 +1,17 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import Lenis from "lenis";
 
-/* PropelBD — dark editorial / industrial. Warm near-black + bone + one molten-signal accent.
-   Cabinet Grotesk display, General Sans body, JetBrains mono labels. Anti V3_AUTOPSY:
-   one bespoke direction, real proof (no fake dashboards), varied intentional motion, zero pricing. */
+/* PropelBD — "The Molten Thread" (Fable-5 direction).
+   Dark editorial. One weld-bright line ignites in the hero and becomes a scroll-scrubbed
+   spine down the page. GSAP ScrollTrigger + Lenis. Cabinet display / General Sans body.
+   Anti V3_AUTOPSY: one bespoke direction, real structure (Problem→Engine→Proof), no fake
+   testimonial, no pricing, motion is narrative not decoration, reduced-motion safe. */
 
 const ACCENT = "#FF5A1F";
-
-function useReveal() {
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    // progressive enhancement: only hide+animate when JS is live (content is visible by default -> no blank page)
-    document.documentElement.classList.add("js");
-    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const els = Array.from(document.querySelectorAll<HTMLElement>("[data-reveal]"));
-    if (reduce) {
-      els.forEach((el) => el.classList.add("is-in"));
-      return;
-    }
-    const io = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((e) => {
-          if (e.isIntersecting) {
-            (e.target as HTMLElement).classList.add("is-in");
-            io.unobserve(e.target);
-          }
-        });
-      },
-      { threshold: 0.18, rootMargin: "0px 0px -8% 0px" }
-    );
-    els.forEach((el) => io.observe(el));
-    return () => io.disconnect();
-  }, []);
-}
 
 function Label({ children }: { children: React.ReactNode }) {
   return (
@@ -44,82 +22,182 @@ function Label({ children }: { children: React.ReactNode }) {
 }
 
 export default function Landing() {
-  useReveal();
-  const [scrolled, setScrolled] = useState(false);
+  const root = useRef<HTMLDivElement>(null);
+  const threadPath = useRef<SVGPathElement>(null);
+
   useEffect(() => {
-    const on = () => setScrolled(window.scrollY > 24);
-    on();
-    window.addEventListener("scroll", on, { passive: true });
-    return () => window.removeEventListener("scroll", on);
+    if (typeof window === "undefined") return;
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    gsap.registerPlugin(ScrollTrigger);
+
+    // reveal fallback: always visible if reduced-motion or JS-light
+    const ctx = gsap.context(() => {
+      if (reduce) {
+        gsap.set("[data-reveal]", { opacity: 1, y: 0 });
+        if (threadPath.current) {
+          const len = threadPath.current.getTotalLength();
+          threadPath.current.style.strokeDasharray = `${len}`;
+          threadPath.current.style.strokeDashoffset = "0";
+        }
+        return;
+      }
+
+      // Lenis smooth scroll wired into ScrollTrigger
+      const lenis = new Lenis({ duration: 1.1, smoothWheel: true });
+      lenis.on("scroll", ScrollTrigger.update);
+      const ticker = (t: number) => lenis.raf(t * 1000);
+      gsap.ticker.add(ticker);
+      gsap.ticker.lagSmoothing(0);
+
+      // hero ignite
+      const nav = gsap.timeline({ delay: 0.25 });
+      nav.from("[data-hero]", { opacity: 0, y: 26, duration: 0.9, stagger: 0.09, ease: "power3.out" });
+      nav.to(".ignite", { color: ACCENT, textShadow: "0 0 46px rgba(255,90,31,0.55), 0 0 12px rgba(255,90,31,0.7)", duration: 0.9, ease: "power2.out" }, "-=0.35");
+
+      // molten thread draws with scroll (the spine)
+      if (threadPath.current) {
+        const len = threadPath.current.getTotalLength();
+        gsap.set(threadPath.current, { strokeDasharray: len, strokeDashoffset: len });
+        gsap.to(threadPath.current, {
+          strokeDashoffset: 0,
+          ease: "none",
+          scrollTrigger: { trigger: root.current, start: "top top", end: "bottom bottom", scrub: 0.6 },
+        });
+      }
+      // thread nodes ignite as the spine passes
+      gsap.utils.toArray<HTMLElement>(".node").forEach((n) => {
+        gsap.to(n, { fill: ACCENT, opacity: 1, boxShadow: "0 0 12px #FF5A1F", scrollTrigger: { trigger: n.dataset.at || root.current, start: "top 62%", toggleActions: "play none none reverse" } });
+      });
+
+      // section reveals (GSAP vocab, not IntersectionObserver)
+      gsap.utils.toArray<HTMLElement>("[data-reveal]").forEach((el) => {
+        gsap.from(el, {
+          opacity: 0, y: 26, duration: 0.85, ease: "power2.out",
+          scrollTrigger: { trigger: el, start: "top 86%" },
+        });
+      });
+
+      return () => {
+        gsap.ticker.remove(ticker);
+        lenis.destroy();
+      };
+    }, root);
+
+    return () => ctx.revert();
   }, []);
 
   return (
-    <div className="relative min-h-screen bg-[#0B0B0C] text-[#ECEAE3] antialiased overflow-clip">
-      {/* grain + vignette atmosphere */}
+    <div ref={root} className="relative min-h-screen bg-[#0B0B0C] text-[#ECEAE3] antialiased overflow-clip">
+      {/* atmosphere */}
       <div aria-hidden className="pointer-events-none fixed inset-0 z-0 opacity-[0.05] mix-blend-soft-light"
         style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")" }} />
       <div aria-hidden className="pointer-events-none fixed inset-0 z-0"
-        style={{ background: "radial-gradient(120% 80% at 78% -10%, rgba(255,90,31,0.10), transparent 55%)" }} />
+        style={{ background: "radial-gradient(120% 70% at 82% -8%, rgba(255,90,31,0.11), transparent 55%)" }} />
+
+      {/* THE MOLTEN THREAD — fixed spine, drawn by scroll */}
+      <svg aria-hidden className="pointer-events-none fixed left-3 top-0 z-20 hidden h-screen w-[64px] md:block" viewBox="0 0 64 1000" preserveAspectRatio="none">
+        <defs>
+          <filter id="glow" x="-60%" y="-60%" width="220%" height="220%">
+            <feGaussianBlur stdDeviation="3.2" result="b" />
+            <feMerge><feMergeNode in="b" /><feMergeNode in="SourceGraphic" /></feMerge>
+          </filter>
+        </defs>
+        <path d="M32 0 L32 120 C32 170 12 190 12 240 C12 300 52 320 52 380 C52 450 20 470 20 540 C20 620 44 640 44 720 C44 800 32 820 32 900 L32 1000"
+          fill="none" stroke="#2A2A2E" strokeWidth="1.5" vectorEffect="non-scaling-stroke" />
+        <path ref={threadPath}
+          d="M32 0 L32 120 C32 170 12 190 12 240 C12 300 52 320 52 380 C52 450 20 470 20 540 C20 620 44 640 44 720 C44 800 32 820 32 900 L32 1000"
+          fill="none" stroke={ACCENT} strokeWidth="2" vectorEffect="non-scaling-stroke" filter="url(#glow)" strokeLinecap="round" />
+      </svg>
 
       {/* NAV */}
-      <nav className={`fixed inset-x-0 top-0 z-50 transition-all duration-300 ${scrolled ? "backdrop-blur-md bg-[#0B0B0C]/70 border-b border-[#1C1C1F]" : "border-b border-transparent"}`}>
-        <div className="mx-auto flex max-w-[1200px] items-center justify-between px-5 py-4 md:px-8">
-          <a href="#top" className="font-display text-lg font-bold tracking-tight">
-            Propel<span style={{ color: ACCENT }}>BD</span>
-          </a>
-          <a href="#contact"
-            className="group inline-flex items-center gap-2 border border-[#2A2A2E] px-4 py-2 font-mono text-[12px] uppercase tracking-[0.16em] text-[#ECEAE3] transition-colors duration-200 hover:border-[#FF5A1F] cursor-pointer">
-            Book a teardown
-            <span className="transition-transform duration-200 group-hover:translate-x-0.5" style={{ color: ACCENT }}>→</span>
+      <nav className="fixed inset-x-0 top-0 z-50 border-b border-[#161619] bg-[#0B0B0C]/70 backdrop-blur-md">
+        <div className="mx-auto flex max-w-[1180px] items-center justify-between px-5 py-4 md:px-8">
+          <a href="#top" className="font-display text-lg font-bold tracking-tight">Propel<span style={{ color: ACCENT }}>BD</span></a>
+          <a href="#contact" className="group inline-flex items-center gap-2 border border-[#2A2A2E] px-4 py-2 font-mono text-[12px] uppercase tracking-[0.16em] transition-colors duration-200 hover:border-[#FF5A1F] cursor-pointer">
+            Book a teardown <span className="transition-transform group-hover:translate-x-0.5" style={{ color: ACCENT }}>→</span>
           </a>
         </div>
       </nav>
 
-      <main id="top" className="relative z-10 mx-auto max-w-[1200px] px-5 md:px-8">
+      <main id="top" className="relative z-10 mx-auto max-w-[1180px] px-5 md:px-8 md:pl-24">
         {/* HERO */}
-        <section className="flex min-h-[92vh] flex-col justify-center pt-28 pb-20">
-          <div data-reveal className="reveal">
-            <Label>Fractional AI-BD · Dubai · Abu Dhabi</Label>
-          </div>
-          <h1 data-reveal className="reveal mt-6 font-display font-bold leading-[0.95] tracking-[-0.02em]"
-            style={{ fontSize: "clamp(2.7rem, 8vw, 6.5rem)" }}>
-            The revenue engine
-            <br />
-            your business is
-            <br />
-            <span style={{ color: ACCENT }}>missing.</span>
+        <section className="flex min-h-[92vh] flex-col justify-center pt-28 pb-16">
+          <div data-hero><Label>Fractional AI-BD · Dubai · Abu Dhabi</Label></div>
+          <h1 data-hero className="mt-6 font-display font-bold leading-[0.95] tracking-[-0.02em]" style={{ fontSize: "clamp(2.7rem, 8vw, 6.6rem)" }}>
+            The revenue engine<br />your business is<br /><span className="ignite">missing.</span>
           </h1>
-          <p data-reveal className="reveal mt-8 max-w-[42ch] text-[17px] leading-relaxed text-[#B8B6AE] md:text-[19px]"
-            style={{ transitionDelay: "80ms" }}>
+          <p data-hero className="mt-8 max-w-[42ch] text-[17px] leading-relaxed text-[#B8B6AE] md:text-[19px]">
             PropelBD installs the AI-powered business-development engine for UAE companies
             behind on AI — lead-gen, outreach, sales, the backend strategy. We build it,
             prove it works, then it runs.
           </p>
-          <div data-reveal className="reveal mt-10 flex flex-wrap items-center gap-4" style={{ transitionDelay: "160ms" }}>
-            <a href="#contact"
-              className="inline-flex items-center gap-2 px-6 py-3.5 font-mono text-[13px] uppercase tracking-[0.14em] text-[#0B0B0C] transition-transform duration-200 hover:-translate-y-0.5 cursor-pointer"
-              style={{ backgroundColor: ACCENT }}>
+          <div data-hero className="mt-10 flex flex-wrap items-center gap-4">
+            <a href="#contact" className="inline-flex items-center gap-2 px-6 py-3.5 font-mono text-[13px] uppercase tracking-[0.14em] text-[#0B0B0C] transition-transform duration-200 hover:-translate-y-0.5 cursor-pointer" style={{ backgroundColor: ACCENT }}>
               Book a revenue teardown →
             </a>
-            <a href="#how" className="font-mono text-[13px] uppercase tracking-[0.14em] text-[#8B8A83] underline-offset-4 hover:text-[#ECEAE3] hover:underline cursor-pointer">
-              See how it works
-            </a>
+            <a href="#how" className="font-mono text-[13px] uppercase tracking-[0.14em] text-[#8B8A83] underline-offset-4 hover:text-[#ECEAE3] hover:underline cursor-pointer">See how it works</a>
           </div>
         </section>
 
         <Rule />
 
-        {/* WEDGE */}
+        {/* PROBLEM (new) */}
         <section className="py-24 md:py-32">
-          <div data-reveal className="reveal"><Label>01 — Why us</Label></div>
-          <div className="mt-10 space-y-6 md:space-y-8">
+          <span className="node" data-at="#problem-h" /><div data-reveal><Label>01 — The problem</Label></div>
+          <h2 id="problem-h" data-reveal className="mt-6 max-w-[18ch] font-display font-bold leading-[1.02] tracking-[-0.02em]" style={{ fontSize: "clamp(2rem, 5vw, 3.6rem)" }}>
+            Your pipeline runs on <span className="text-[#6E6D67]">referrals and luck.</span>
+          </h2>
+          <div className="mt-12 grid gap-8 md:grid-cols-3">
             {[
-              ["Agencies invoice for hours.", "We invoice for revenue."],
-              ["We don’t sell decks —", "we sell the check."],
-              ["Your growth", "is our only deliverable."],
+              ["No system", "New business shows up when someone remembers you. There’s no engine underneath it."],
+              ["Behind on AI", "The tools that could find and warm your next 100 buyers exist — you just haven’t deployed them."],
+              ["No time to build", "You could figure it out. But you’re running the business, not building a growth machine."],
+            ].map(([t, d], i) => (
+              <div key={i} data-reveal>
+                <div className="font-mono text-[12px] uppercase tracking-[0.18em] text-[#8B8A83]">{t}</div>
+                <p className="mt-3 text-[15px] leading-relaxed text-[#B8B6AE]">{d}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <Rule />
+
+        {/* ENGINE (new — show the product) */}
+        <section className="py-24 md:py-32">
+          <span className="node" data-at="#engine-h" /><div data-reveal><Label>02 — The engine</Label></div>
+          <h2 id="engine-h" data-reveal className="mt-6 max-w-[20ch] font-display font-bold leading-[1.02] tracking-[-0.02em]" style={{ fontSize: "clamp(2rem, 5vw, 3.6rem)" }}>
+            One system. <span style={{ color: ACCENT }}>Five moving parts.</span>
+          </h2>
+          <div className="mt-14 grid gap-px overflow-hidden rounded-none border border-[#1C1C1F] bg-[#1C1C1F] md:grid-cols-5">
+            {[
+              ["Targeting", "ICP, geography, STP — who to chase and why."],
+              ["Lead-gen", "Verified pipeline, not scraped guesses."],
+              ["Outreach", "Sequences that get replies, built to your voice."],
+              ["Sales", "Trained to close what the engine surfaces."],
+              ["Backend", "The strategy and data that keeps it compounding."],
+            ].map(([t, d], i) => (
+              <div key={i} data-reveal className="bg-[#0B0B0C] p-6 transition-colors duration-300 hover:bg-[#101012]">
+                <div className="font-mono text-[12px]" style={{ color: ACCENT }}>{String(i + 1).padStart(2, "0")}</div>
+                <h3 className="mt-4 font-display text-lg font-semibold tracking-tight">{t}</h3>
+                <p className="mt-2 text-[13.5px] leading-relaxed text-[#9A988F]">{d}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <Rule />
+
+        {/* WEDGE (fixed — accountability, not comp-model) */}
+        <section id="how" className="py-24 md:py-32">
+          <span className="node" data-at="#wedge-h" /><div data-reveal><Label>03 — Why us</Label></div>
+          <div id="wedge-h" className="mt-10 space-y-6 md:space-y-8">
+            {[
+              ["Agencies report hours.", "We report pipeline."],
+              ["We’re not measured on decks —", "we’re measured on meetings that land."],
+              ["Your growth", "is the only scoreboard."],
             ].map(([a, b], i) => (
-              <p key={i} data-reveal className="reveal font-display font-semibold leading-[1.05] tracking-[-0.015em]"
-                style={{ fontSize: "clamp(1.8rem, 4.4vw, 3.4rem)", transitionDelay: `${i * 70}ms` }}>
+              <p key={i} data-reveal className="font-display font-semibold leading-[1.05] tracking-[-0.015em]" style={{ fontSize: "clamp(1.8rem, 4.4vw, 3.4rem)" }}>
                 <span className="text-[#6E6D67]">{a}</span> <span className="text-[#ECEAE3]">{b}</span>
               </p>
             ))}
@@ -128,123 +206,96 @@ export default function Landing() {
 
         <Rule />
 
-        {/* HOW IT WORKS */}
-        <section id="how" className="py-24 md:py-32">
-          <div data-reveal className="reveal"><Label>02 — How it works</Label></div>
-          <h2 data-reveal className="reveal mt-6 max-w-[20ch] font-display font-bold leading-[1.0] tracking-[-0.02em]"
-            style={{ fontSize: "clamp(2rem, 5vw, 3.6rem)" }}>
-            Built, proven, then scaled.
+        {/* PROOF (SupperClub — real framing, NO fabricated quote) */}
+        <section className="py-24 md:py-32">
+          <span className="node" data-at="#proof-h" /><div data-reveal><Label>04 — Proof</Label></div>
+          <h2 id="proof-h" data-reveal className="mt-6 font-display font-bold leading-[1.02] tracking-[-0.02em]" style={{ fontSize: "clamp(2rem, 4.6vw, 3.4rem)" }}>
+            We built the engine for <span style={{ color: ACCENT }}>SupperClub</span>.
           </h2>
-          <div className="mt-14 grid gap-px overflow-hidden border border-[#1C1C1F] bg-[#1C1C1F] md:grid-cols-3">
-            {[
-              ["01", "Build the engine", "We install the AI-powered BD system your business doesn’t have — targeting, outreach, sequences, the backend strategy."],
-              ["02", "Prove it works", "Real pipeline, real meetings, real numbers — before anything scales. No theater."],
-              ["03", "Scale the results", "The engine runs and compounds. You keep the system, the data, and the momentum."],
-            ].map(([n, t, d], i) => (
-              <div key={i} data-reveal className="reveal group bg-[#0B0B0C] p-8 transition-colors duration-300 hover:bg-[#101012] md:p-10"
-                style={{ transitionDelay: `${i * 80}ms` }}>
-                <div className="font-mono text-[13px]" style={{ color: ACCENT }}>{n}</div>
-                <h3 className="mt-6 font-display text-2xl font-semibold tracking-tight">{t}</h3>
-                <p className="mt-3 text-[15px] leading-relaxed text-[#9A988F]">{d}</p>
-              </div>
+          <p data-reveal className="mt-6 max-w-[52ch] text-[16px] leading-relaxed text-[#B8B6AE]">
+            A UAE business that was behind on AI. We stood up the outbound engine, the
+            targeting, and the corporate-membership pipeline — and the meetings started
+            landing. The same playbook we install for you.
+          </p>
+          <div data-reveal className="mt-10 flex flex-wrap gap-3">
+            {["Outbound engine, built", "Corporate pipeline, live", "Meetings booked with buyers"].map((t) => (
+              <span key={t} className="border border-[#26262A] px-4 py-2 font-mono text-[12px] uppercase tracking-[0.14em] text-[#B8B6AE]">{t}</span>
             ))}
           </div>
+          <p data-reveal className="mt-6 font-mono text-[11px] uppercase tracking-[0.18em] text-[#6E6D67]">
+            {/* real metrics + attributed quote slot in once SCME signs off */}
+            Anchor client · full case detail on request
+          </p>
         </section>
 
         <Rule />
 
-        {/* PROOF — SupperClub (real, no fake dashboards) */}
+        {/* WHO */}
         <section className="py-24 md:py-32">
-          <div data-reveal className="reveal"><Label>03 — Proof</Label></div>
-          <div className="mt-10 grid gap-12 md:grid-cols-[1.1fr_1fr] md:gap-16">
-            <div>
-              <h2 data-reveal className="reveal font-display font-bold leading-[1.02] tracking-[-0.02em]"
-                style={{ fontSize: "clamp(2rem, 4.6vw, 3.4rem)" }}>
-                We built the engine
-                <br />for <span style={{ color: ACCENT }}>SupperClub</span>.
-              </h2>
-              <p data-reveal className="reveal mt-6 max-w-[46ch] text-[16px] leading-relaxed text-[#B8B6AE]" style={{ transitionDelay: "80ms" }}>
-                A UAE business that was behind on AI. We stood up the outbound engine, the
-                targeting, the corporate-membership pipeline — and the meetings started
-                landing. Same playbook we install for you.
-              </p>
-            </div>
-            <div data-reveal className="reveal self-end border-l border-[#26262A] pl-8" style={{ transitionDelay: "120ms" }}>
-              <blockquote className="font-display text-xl leading-snug text-[#ECEAE3] md:text-2xl">
-                “They didn’t hand us a strategy deck. They built the thing and made it work.”
-              </blockquote>
-              <div className="mt-5 font-mono text-[12px] uppercase tracking-[0.16em] text-[#8B8A83]">
-                SupperClub — anchor client
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <Rule />
-
-        {/* WHO IT'S FOR */}
-        <section className="py-24 md:py-32">
-          <div data-reveal className="reveal"><Label>04 — Who it’s for</Label></div>
-          <h2 data-reveal className="reveal mt-6 max-w-[24ch] font-display font-bold leading-[1.02] tracking-[-0.02em]"
-            style={{ fontSize: "clamp(2rem, 5vw, 3.6rem)" }}>
+          <span className="node" data-at="#who-h" /><div data-reveal><Label>05 — Who it’s for</Label></div>
+          <h2 id="who-h" data-reveal className="mt-6 max-w-[24ch] font-display font-bold leading-[1.02] tracking-[-0.02em]" style={{ fontSize: "clamp(2rem, 5vw, 3.6rem)" }}>
             UAE companies <span className="text-[#6E6D67]">behind on AI.</span>
           </h2>
           <div className="mt-12 grid gap-8 md:grid-cols-3">
             {[
-              ["You’re in", "Real revenue, real customers, a business worth scaling — but your pipeline still runs on referrals and gut feel."],
-              ["You know", "AI could transform how you find and close business. You just don’t have the system, or the time to build it."],
-              ["You’re not", "A funded AI-native startup that already lives in this world. That’s not who we’re for."],
-            ].map(([t, d], i) => (
-              <div key={i} data-reveal className="reveal" style={{ transitionDelay: `${i * 70}ms` }}>
-                <div className="font-mono text-[12px] uppercase tracking-[0.18em]" style={{ color: i === 2 ? "#6E6D67" : ACCENT }}>{t}</div>
+              ["You’re in", "Real revenue, real customers, a business worth scaling — but the pipeline still runs on referrals.", ACCENT],
+              ["You know", "AI could transform how you find and close business. You just don’t have the system, or the time to build it.", ACCENT],
+              ["You’re not", "A funded AI-native startup that already lives in this world. That’s not who we’re for.", "#6E6D67"],
+            ].map(([t, d, c], i) => (
+              <div key={i} data-reveal>
+                <div className="font-mono text-[12px] uppercase tracking-[0.18em]" style={{ color: c as string }}>{t}</div>
                 <p className="mt-4 text-[15px] leading-relaxed text-[#B8B6AE]">{d}</p>
               </div>
             ))}
           </div>
         </section>
 
+        <Rule />
+
+        {/* FOUNDER (new — a human for the trust buy) */}
+        <section className="py-24 md:py-32">
+          <span className="node" data-at="#founder-h" /><div data-reveal><Label>06 — Who builds it</Label></div>
+          <div className="mt-10 grid gap-10 md:grid-cols-[auto_1fr] md:items-center md:gap-14">
+            <div data-reveal className="flex h-28 w-28 items-center justify-center border border-[#26262A] font-display text-3xl font-bold text-[#6E6D67]">AS</div>
+            <div data-reveal>
+              <h3 id="founder-h" className="font-display text-2xl font-semibold tracking-tight md:text-3xl">Ali Shaheen</h3>
+              <p className="mt-4 max-w-[54ch] text-[16px] leading-relaxed text-[#B8B6AE]">
+                Hands-on fractional operator. I don’t hand you a strategy and disappear — I build
+                the engine, run it until it works, and stay in it. One client at a time, no agency
+                bloat, no theater.
+              </p>
+            </div>
+          </div>
+        </section>
+
         {/* CTA */}
         <section id="contact" className="py-28 md:py-40">
-          <div data-reveal className="reveal rounded-none border border-[#26262A] p-10 md:p-16"
-            style={{ background: "linear-gradient(180deg, #101012 0%, #0B0B0C 100%)" }}>
-            <h2 className="max-w-[18ch] font-display font-bold leading-[1.0] tracking-[-0.02em]"
-              style={{ fontSize: "clamp(2.2rem, 5.5vw, 4.2rem)" }}>
+          <div data-reveal className="border border-[#26262A] p-10 md:p-16" style={{ background: "linear-gradient(180deg, #101012 0%, #0B0B0C 100%)" }}>
+            <h2 className="max-w-[18ch] font-display font-bold leading-[1.0] tracking-[-0.02em]" style={{ fontSize: "clamp(2.2rem, 5.5vw, 4.2rem)" }}>
               Let’s build your <span style={{ color: ACCENT }}>engine.</span>
             </h2>
             <p className="mt-6 max-w-[44ch] text-[17px] leading-relaxed text-[#B8B6AE]">
               A short, specific conversation about where your revenue is leaking and what
               we’d build first. No deck. No pitch theater.
             </p>
-            <a href="mailto:ali@propelbd.com"
-              className="mt-10 inline-flex items-center gap-2 px-7 py-4 font-mono text-[13px] uppercase tracking-[0.14em] text-[#0B0B0C] transition-transform duration-200 hover:-translate-y-0.5 cursor-pointer"
-              style={{ backgroundColor: ACCENT }}>
+            <a href="mailto:ali@propelbd.com?subject=Revenue%20teardown" className="mt-10 inline-flex items-center gap-2 px-7 py-4 font-mono text-[13px] uppercase tracking-[0.14em] text-[#0B0B0C] transition-transform duration-200 hover:-translate-y-0.5 cursor-pointer" style={{ backgroundColor: ACCENT }}>
               Book a revenue teardown →
             </a>
           </div>
         </section>
       </main>
 
-      {/* FOOTER */}
-      <footer className="relative z-10 border-t border-[#1C1C1F]">
-        <div className="mx-auto flex max-w-[1200px] flex-col gap-4 px-5 py-10 md:flex-row md:items-center md:justify-between md:px-8">
+      <footer className="relative z-10 border-t border-[#161619]">
+        <div className="mx-auto flex max-w-[1180px] flex-col gap-4 px-5 py-10 md:flex-row md:items-center md:justify-between md:px-8">
           <div className="font-display text-base font-bold">Propel<span style={{ color: ACCENT }}>BD</span></div>
           <div className="font-display text-[15px] italic text-[#8B8A83]">Your business, rebuilt to scale.</div>
-          <div className="font-mono text-[11px] uppercase tracking-[0.18em] text-[#6E6D67]">
-            © {new Date().getFullYear()} PropelBD · Dubai · Abu Dhabi
-          </div>
+          <div className="font-mono text-[11px] uppercase tracking-[0.18em] text-[#6E6D67]">© {new Date().getFullYear()} PropelBD · Dubai · Abu Dhabi</div>
         </div>
       </footer>
-
-      <style>{`
-        .reveal { opacity: 1; transform: none; }
-        .js .reveal { opacity: 0; transform: translateY(22px); transition: opacity .7s cubic-bezier(.2,.7,.2,1), transform .7s cubic-bezier(.2,.7,.2,1); }
-        .js .reveal.is-in { opacity: 1; transform: none; }
-        @media (prefers-reduced-motion: reduce) { .js .reveal { opacity: 1; transform: none; transition: none; } }
-      `}</style>
     </div>
   );
 }
 
 function Rule() {
-  return <div className="h-px w-full bg-[#1C1C1F]" />;
+  return <div className="h-px w-full bg-[#161619]" />;
 }
