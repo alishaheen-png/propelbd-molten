@@ -27,18 +27,18 @@ const jetbrains = JetBrains_Mono({
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://propelbd.com"),
-  title: "PropelBD — Fractional Business Development",
-  description: "Revenue is a system. We run it. Fractional BD for founders in Dubai and Abu Dhabi.",
+  title: "PropelBD — The revenue engine your business is missing.",
+  description: "PropelBD installs the AI-powered business-development engine for UAE companies behind on AI. We build it, prove it works, then it runs.",
   openGraph: {
-    title: "PropelBD — Fractional Business Development",
-    description: "Revenue is a system. We run it.",
+    title: "PropelBD — The revenue engine your business is missing.",
+    description: "We build it, prove it works, then it runs.",
     type: "website",
     locale: "en_AE",
   },
   twitter: {
     card: "summary_large_image",
-    title: "PropelBD — Fractional Business Development",
-    description: "Revenue is a system. We run it.",
+    title: "PropelBD — The revenue engine your business is missing.",
+    description: "We build it, prove it works, then it runs.",
   },
   alternates: {
     canonical: "/",
