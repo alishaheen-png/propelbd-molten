@@ -23,8 +23,9 @@ export default function OG() {
           Propel<span style={{ color: "#FF5A1F" }}>BD</span>
         </div>
         <div style={{ display: "flex", flexDirection: "column" }}>
-          <div style={{ fontSize: 82, fontWeight: 800, color: "#ECEAE3", lineHeight: 1.02, letterSpacing: -2, maxWidth: 900 }}>
-            The revenue engine your business is <span style={{ color: "#FF5A1F" }}>missing.</span>
+          <div style={{ display: "flex", flexWrap: "wrap", fontSize: 82, fontWeight: 800, color: "#ECEAE3", lineHeight: 1.02, letterSpacing: -2, maxWidth: 920 }}>
+            <span style={{ color: "#ECEAE3" }}>The revenue engine your business is&nbsp;</span>
+            <span style={{ color: "#FF5A1F" }}>missing.</span>
           </div>
           <div style={{ marginTop: 28, fontSize: 26, color: "#B8B6AE", maxWidth: 820 }}>
             AI-powered business development for UAE companies behind on AI. Built, proven, then scaled.
