@@ -161,7 +161,7 @@ export default function Landing() {
         <section className="py-24 md:py-32">
           <span className="node mb-5 block h-2.5 w-2.5 rounded-full bg-[#3A2A20]" data-at="#problem-h" /><div data-reveal><Label>01 — The problem</Label></div>
           <h2 id="problem-h" data-reveal className="mt-6 max-w-[18ch] font-display font-bold leading-[1.02] tracking-[-0.02em]" style={{ fontSize: "clamp(2rem, 5vw, 3.6rem)" }}>
-            Your pipeline runs on <span className="text-[#6E6D67]">referrals and luck.</span>
+            Your pipeline runs on <span className="text-[#8B8A83]">referrals and luck.</span>
           </h2>
           <div className="mt-12 border-t border-[#1C1C1F]">
             {[
@@ -170,12 +170,15 @@ export default function Landing() {
               ["No time to build", "You could figure it out. But you’re running the business, not building a revenue engine."],
             ].map(([t, d], i) => (
               <div key={i} data-reveal className="grid grid-cols-[auto_1fr] items-baseline gap-x-6 gap-y-2 border-b border-[#1C1C1F] py-7 md:grid-cols-[3.5rem_15rem_1fr] md:gap-x-10 md:py-9">
-                <div className="font-mono text-[13px] text-[#6E6D67]">{String(i + 1).padStart(2, "0")}</div>
+                <div className="font-mono text-[13px] text-[#8B8A83]">{String(i + 1).padStart(2, "0")}</div>
                 <div className="font-display text-lg font-semibold tracking-tight md:text-xl">{t}</div>
                 <p className="col-start-2 text-[15px] leading-relaxed text-[#B8B6AE] md:col-start-3 md:text-[15.5px]">{d}</p>
               </div>
             ))}
           </div>
+          <p data-reveal className="mt-12 max-w-[34ch] font-display text-xl font-semibold leading-snug tracking-[-0.01em] text-[#ECEAE3] md:text-2xl">
+            The cost isn’t the software. It’s the buyers closing with someone else while you wait.
+          </p>
         </section>
 
         <Rule />
@@ -215,7 +218,7 @@ export default function Landing() {
               ["Your revenue", "is the only scoreboard."],
             ].map(([a, b], i) => (
               <p key={i} data-reveal className="font-display font-semibold leading-[1.05] tracking-[-0.015em]" style={{ fontSize: "clamp(1.8rem, 4.4vw, 3.4rem)" }}>
-                <span className="text-[#6E6D67]">{a}</span> <span className="text-[#ECEAE3]">{b}</span>
+                <span className="text-[#8B8A83]">{a}</span> <span className="text-[#ECEAE3]">{b}</span>
               </p>
             ))}
           </div>
@@ -246,7 +249,7 @@ export default function Landing() {
               </div>
             ))}
           </div>
-          <p data-reveal className="mt-6 font-mono text-[11px] uppercase tracking-[0.18em] text-[#6E6D67]">
+          <p data-reveal className="mt-6 font-mono text-[11px] uppercase tracking-[0.18em] text-[#8B8A83]">
             Anchor client · full case detail on request
           </p>
         </section>
@@ -257,7 +260,7 @@ export default function Landing() {
         <section className="py-24 md:py-32">
           <span className="node mb-5 block h-2.5 w-2.5 rounded-full bg-[#3A2A20]" data-at="#who-h" /><div data-reveal><Label>05 — Who it’s for</Label></div>
           <h2 id="who-h" data-reveal className="mt-6 max-w-[24ch] font-display font-bold leading-[1.02] tracking-[-0.02em]" style={{ fontSize: "clamp(2rem, 5vw, 3.6rem)" }}>
-            UAE companies <span className="text-[#6E6D67]">behind on AI.</span>
+            UAE companies <span className="text-[#8B8A83]">behind on AI.</span>
           </h2>
           <div className="mt-12 grid gap-8 md:grid-cols-2">
             {[
@@ -284,7 +287,7 @@ export default function Landing() {
         <section className="py-24 md:py-32">
           <span className="node mb-5 block h-2.5 w-2.5 rounded-full bg-[#3A2A20]" data-at="#founder-h" /><div data-reveal><Label>06 — Who builds it</Label></div>
           <div className="mt-10 grid gap-10 md:grid-cols-[auto_1fr] md:items-center md:gap-14">
-            <div data-reveal className="flex h-28 w-28 items-center justify-center border border-[#26262A] font-display text-3xl font-bold text-[#6E6D67]">AS</div>
+            <div data-reveal role="img" aria-label="Ali Shaheen" className="flex h-28 w-28 items-center justify-center border border-[#26262A] font-display text-3xl font-bold text-[#8B8A83]">AS</div>
             <div data-reveal>
               <h3 id="founder-h" className="font-display text-2xl font-semibold tracking-tight md:text-3xl">Ali Shaheen</h3>
               <p className="mt-4 max-w-[54ch] text-[16px] leading-relaxed text-[#B8B6AE]">
@@ -317,7 +320,7 @@ export default function Landing() {
         <div className="mx-auto flex max-w-[1180px] flex-col gap-4 px-5 py-10 md:flex-row md:items-center md:justify-between md:px-8">
           <div className="font-display text-base font-bold">Propel<span style={{ color: ACCENT }}>BD</span></div>
           <div className="font-display text-[15px] italic text-[#8B8A83]">Your business, rebuilt to scale.</div>
-          <div className="font-mono text-[11px] uppercase tracking-[0.18em] text-[#6E6D67]">© {new Date().getFullYear()} PropelBD · Dubai · Abu Dhabi</div>
+          <div className="font-mono text-[11px] uppercase tracking-[0.18em] text-[#8B8A83]">© {new Date().getFullYear()} PropelBD · Dubai · Abu Dhabi</div>
         </div>
       </footer>
     </div>
