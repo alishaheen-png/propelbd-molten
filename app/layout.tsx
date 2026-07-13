@@ -50,9 +50,28 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // JSON-LD LocalBusiness (ProfessionalService deprecated per schema.org) — static literal, no dynamic content (SEO ship item)
+  const jsonLd = JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    name: "PropelBD",
+    description:
+      "Fractional AI-powered business development for UAE companies: lead generation, outreach, sales, and the backend strategy. Built, proven, then run.",
+    url: "https://propelbd.com",
+    areaServed: [
+      { "@type": "City", name: "Dubai" },
+      { "@type": "City", name: "Abu Dhabi" },
+    ],
+    knowsAbout: ["business development", "lead generation", "B2B outbound", "AI sales systems"],
+  });
+
   return (
     <html lang="en" className={`${cabinet.variable} ${generalSans.variable} ${jetbrains.variable}`}>
-      <body className="antialiased">{children}</body>
+      <body className="antialiased">
+        {/* static compile-time literal — no user input, hydration-safe via innerHTML */}
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd }} />
+        {children}
+      </body>
     </html>
   );
 }

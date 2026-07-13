@@ -257,9 +257,8 @@ export default function Landing() {
               </p>
               <div data-hero className="mt-10 flex flex-wrap items-center gap-4">
                 <a href="#contact" className="inline-flex items-center gap-2 px-6 py-3.5 font-mono text-[13px] uppercase tracking-[0.14em] text-[#0B0B0C] transition-transform duration-200 hover:-translate-y-0.5 cursor-pointer" style={{ backgroundColor: ACCENT }}>
-                  Book a free revenue teardown →
+                  Book the free revenue teardown →
                 </a>
-                <a href="#engine" className="font-mono text-[13px] uppercase tracking-[0.14em] text-[#A5A39B] underline-offset-4 hover:text-[#ECEAE3] hover:underline cursor-pointer">See the engine</a>
               </div>
               <p data-hero className="mt-9 border-t border-[#1C1C1F] pt-5 font-mono text-[12px] uppercase leading-[2] tracking-[0.14em] text-[#A5A39B]">
                 <span className="text-[#ECEAE3]">321</span> decision-makers mapped · <span className="text-[#ECEAE3]">16</span> corporate targets live · <span className="text-[#ECEAE3]">1st</span> deal closed — for our anchor client SupperClub
@@ -336,12 +335,51 @@ export default function Landing() {
           </div>
         </section>
 
-        {/* ============ 03 WHY — SPLIT ============ */}
-        <section id="how" data-forge="6:7" className="forge-tall relative h-[180vh]">
+        {/* ============ 03 THE OFFER ============ */}
+        <section id="offer" data-forge="6:6.5" className="relative py-28 md:py-36">
+          <div className="mx-auto w-full max-w-[1180px] px-5 md:px-8">
+            <div data-repel className="scrim max-w-[46rem]">
+              <Label>03 — The offer</Label>
+              <h2 data-reveal className="text-shadow-editorial mt-6 max-w-[20ch] font-display font-bold leading-[1.02] tracking-[-0.02em]" style={{ fontSize: "clamp(2rem, 5vw, 3.6rem)" }}>
+                The engine, installed. <span style={{ color: ACCENT }}>You keep the map</span> either way.
+              </h2>
+              <p data-reveal className="mt-5 max-w-[56ch] text-[16px] leading-[1.7] text-[#AEACA3]">
+                Built once already: 321 decision-makers mapped and a first corporate deal
+                closed for SupperClub.
+              </p>
+              <div className="mt-10 space-y-5">
+                {[
+                  ["Revenue teardown first", "We map where your pipeline leaks before you commit a dirham. The map is yours to keep, buy or not."],
+                  ["ICP and verified buyer list", "Decision-makers mapped and verified. Not scraped spam."],
+                  ["Outbound engine, live", "Sequences in your voice, tracking, reporting. Built, then running under our hand."],
+                  ["Qualified meetings on your calendar", "Revenue is the only scoreboard we report against."],
+                  ["Founder-built, founder-run", "One client at a time. No junior handoff, no account-manager theater."],
+                ].map(([t, d], i) => (
+                  <div key={i} data-reveal className="grid grid-cols-[auto_1fr] items-baseline gap-x-4 border-b border-[#1C1C1F] pb-5">
+                    <span className="font-mono text-[13px]" style={{ color: ACCENT }}>{String(i + 1).padStart(2, "0")}</span>
+                    <div>
+                      <h3 className="font-display text-xl font-semibold tracking-tight md:text-2xl">{t}</h3>
+                      <p className="mt-2 max-w-[54ch] text-[16px] leading-[1.7] text-[#C9C7BF]">{d}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <div data-reveal className="mt-9 flex flex-wrap items-center gap-5">
+                <a href="#contact" className="inline-flex items-center gap-2 px-6 py-3.5 font-mono text-[13px] uppercase tracking-[0.14em] text-[#0B0B0C] transition-transform duration-200 hover:-translate-y-0.5 cursor-pointer" style={{ backgroundColor: ACCENT }}>
+                  Book the free revenue teardown →
+                </a>
+                <span className="font-mono text-[12px] uppercase tracking-[0.18em] text-[#A5A39B]">Founder-run · one client at a time</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ============ 04 WHY — SPLIT ============ */}
+        <section id="how" data-forge="6.5:7" className="forge-tall relative h-[180vh]">
           <div className="forge-sticky sticky top-0 flex h-screen items-center">
             <div className="mx-auto w-full max-w-[1180px] px-5 md:px-8">
               <div data-repel className="scrim py-10">
-                <Label>03 — Why us</Label>
+                <Label>04 — Why us</Label>
                 <div className="mt-10 hidden grid-cols-[1fr_auto_1fr] items-baseline gap-x-8 md:grid">
                   <div className="font-mono text-[13px] uppercase tracking-[0.18em] text-[#B3B1A6]">Every other agency</div>
                   <div />
@@ -369,7 +407,7 @@ export default function Landing() {
         <section id="proof" data-forge="7:8" className="relative py-28 md:py-36">
           <div className="mx-auto w-full max-w-[1180px] px-5 md:px-8">
             <div data-repel className="scrim">
-              <Label>04 — Proof</Label>
+              <Label>05 — Proof</Label>
               <h2 data-reveal className="text-shadow-editorial mt-6 max-w-[22ch] font-display font-bold leading-[1.02] tracking-[-0.02em]" style={{ fontSize: "clamp(2rem, 4.6vw, 3.4rem)" }}>
                 Who we’ve been in the <span style={{ color: ACCENT }}>engine room</span> with.
               </h2>
@@ -415,11 +453,11 @@ export default function Landing() {
           </div>
         </section>
 
-        {/* ============ 05 WHO ============ */}
+        {/* ============ 06 WHO ============ */}
         <section data-forge="8:8.2" className="relative py-28 md:py-36">
           <div className="mx-auto w-full max-w-[1180px] px-5 md:px-8">
             <div data-repel className="scrim max-w-[44rem]">
-              <Label>05 — Who it’s for</Label>
+              <Label>06 — Who it’s for</Label>
               <h2 data-reveal className="text-shadow-editorial mt-6 max-w-[24ch] font-display font-bold leading-[1.02] tracking-[-0.02em]" style={{ fontSize: "clamp(2rem, 5vw, 3.4rem)" }}>
                 UAE companies <span className="text-[#A5A39B]">behind on AI.</span>
               </h2>
@@ -434,8 +472,34 @@ export default function Landing() {
           </div>
         </section>
 
+        {/* ============ FAQ — OBJECTIONS, PRE-HANDLED ============ */}
+        <section data-forge="8.2:8.4" className="relative py-24 md:py-28">
+          <div className="mx-auto w-full max-w-[1180px] px-5 md:px-8">
+            <div data-repel className="scrim max-w-[44rem]">
+              <Label>FAQ</Label>
+              <div className="mt-8 space-y-1">
+                {[
+                  ["Why not just hire a BD person?", "A senior BD hire in the UAE runs well past our retainer once you add ramp time, tooling, and management. The engine arrives built, with the founder running it — and if it does not fit, you stop. No severance, no rehiring cycle."],
+                  ["How fast do we see something real?", "The revenue teardown lands before any commitment. Once we start, the first verified buyer lists and live outreach move in weeks, not quarters — you watch the pipeline fill in the same tracker we work from."],
+                  ["What do you need from us?", "One decision-maker, roughly an hour a week, and honest answers about who your best customers are. We handle the rest — lists, sequences, tooling, follow-up discipline."],
+                  ["Are we locked in?", "No long lock-in. The work compounds, so clients stay because it works — and everything built for you, the lists, the sequences, the map, stays yours."],
+                  ["Does AI mean automated spam?", "The opposite. AI does the mapping and the grunt work; every message ships in your voice, aimed at a verified decision-maker, reviewed before it leaves. Volume without spray."],
+                ].map(([q, a], i) => (
+                  <details key={i} data-reveal className="faq-item group border-b border-[#1C1C1F]">
+                    <summary className="flex cursor-pointer items-baseline justify-between gap-6 py-5 font-display text-lg font-semibold tracking-tight text-[#ECEAE3] md:text-xl [&::-webkit-details-marker]:hidden">
+                      {q}
+                      <span aria-hidden className="shrink-0 font-mono text-[15px] transition-transform duration-200 group-open:rotate-45" style={{ color: ACCENT }}>+</span>
+                    </summary>
+                    <p className="max-w-[58ch] pb-6 text-[16px] leading-[1.7] text-[#C9C7BF]">{a}</p>
+                  </details>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* ============ CTA — IGNITION ============ */}
-        <section id="contact" data-forge="8.2:9" className="relative flex min-h-[100dvh] items-center py-28">
+        <section id="contact" data-forge="8.4:9" className="relative flex min-h-[100dvh] items-center py-28">
           <div className="mx-auto w-full max-w-[1180px] px-5 md:px-8">
             <div data-repel className="scrim ember-border mx-auto max-w-[40rem] px-6 py-12 text-center md:px-12">
               <h2 data-reveal className="text-shadow-editorial font-display font-bold leading-[1.0] tracking-[-0.02em]" style={{ fontSize: "clamp(2.4rem, 6vw, 4.6rem)" }}>
@@ -452,6 +516,9 @@ export default function Landing() {
                 You work directly with the founder — the person who builds the engine,
                 runs it, and answers for it.
               </p>
+              <p data-reveal className="mt-3 font-mono text-[12px] uppercase tracking-[0.18em] text-[#77756D]">
+                Replies within one business day
+              </p>
             </div>
           </div>
         </section>
@@ -461,7 +528,9 @@ export default function Landing() {
         <div className="mx-auto flex max-w-[1180px] flex-col gap-4 px-5 py-10 md:flex-row md:items-center md:justify-between md:px-8">
           <div className="font-display text-base font-bold">Propel<span style={{ color: ACCENT }}>BD</span></div>
           <div className="font-display text-[15px] italic text-[#A5A39B]">Your business, rebuilt to scale.</div>
-          <div className="font-mono text-[11px] uppercase tracking-[0.18em] text-[#A5A39B]">© {new Date().getFullYear()} PropelBD · Dubai · Abu Dhabi</div>
+          <div className="font-mono text-[11px] uppercase tracking-[0.18em] text-[#A5A39B]">
+            © {new Date().getFullYear()} PropelBD · Dubai · Abu Dhabi · <a href={`${BASE}/privacy`} className="underline-offset-4 hover:text-[#ECEAE3] hover:underline">Privacy</a>
+          </div>
         </div>
       </footer>
     </div>
