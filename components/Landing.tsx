@@ -19,6 +19,7 @@ import Lenis from "lenis";
 const MoltenOrganism = dynamic(() => import("./MoltenOrganism"), { ssr: false });
 
 const ACCENT = "#FF5A1F";
+const BASE = process.env.NEXT_PUBLIC_BASE_PATH || "";
 
 const ENGINE_BEATS = [
   ["Targeting", "ICP, geography, STP — who to chase and why.", "The organism locks a reticle on the market."],
@@ -160,25 +161,25 @@ export default function Landing() {
         });
       }
 
-      // PROOF — numbers count on scrub position, not time
+      // PROOF — numbers count up once when the band enters
       const proofSec = root.current?.querySelector<HTMLElement>("#proof");
       if (proofSec) {
         const counters = Array.from(proofSec.querySelectorAll<HTMLElement>("[data-count]"));
-        const lastShown = counters.map(() => -1);
-        ScrollTrigger.create({
-          trigger: proofSec,
-          start: "top top",
-          end: "bottom bottom",
-          onUpdate: (self) => {
-            const t = Math.min(1, self.progress * 2.2);
-            counters.forEach((c, i) => {
-              const target = Number(c.dataset.count || "0");
-              const v = Math.round(target * t);
-              if (v === lastShown[i]) return; // no DOM write unless the digit changed
-              lastShown[i] = v;
-              c.textContent = `${v}${c.dataset.suffix || ""}`;
-            });
-          },
+        counters.forEach((c) => {
+          const target = Number(c.dataset.count || "0");
+          const suffix = c.dataset.suffix || "";
+          const proxy = { v: 0 };
+          let last = -1;
+          gsap.to(proxy, {
+            v: target, duration: 1.4, ease: "power2.out",
+            scrollTrigger: { trigger: proofSec, start: "top 72%", toggleActions: "play none none none" },
+            onUpdate: () => {
+              const v = Math.round(proxy.v);
+              if (v === last) return;
+              last = v;
+              c.textContent = `${v}${suffix}`;
+            },
+          });
         });
       }
 
@@ -364,36 +365,52 @@ export default function Landing() {
           </div>
         </section>
 
-        {/* ============ 04 PROOF — CONSTELLATION ============ */}
-        <section id="proof" data-forge="7:8" className="forge-tall relative h-[230vh]">
-          <div className="forge-sticky sticky top-0 flex h-screen items-center">
-            <div className="mx-auto w-full max-w-[1180px] px-5 md:px-8">
-              <div data-repel className="scrim max-w-[46rem] py-10">
-                <Label>04 — Proof</Label>
-                <h2 className="text-shadow-editorial mt-6 font-display font-bold leading-[1.02] tracking-[-0.02em]" style={{ fontSize: "clamp(2rem, 4.6vw, 3.4rem)" }}>
-                  We built the engine for <span style={{ color: ACCENT }}>SupperClub</span>.
-                </h2>
-                <p className="mt-6 max-w-[52ch] text-[17px] leading-[1.7] text-[#C9C7BF]">
-                  A UAE business that was behind on AI. We stood up the outbound engine, the
-                  targeting, and the corporate-membership pipeline — and the meetings started
-                  landing. The same playbook we install for you.
-                </p>
-                <div className="glow-grid mt-10 grid gap-px overflow-hidden border border-[#26262A] bg-[#26262A] sm:grid-cols-3">
-                  {[
-                    ["16", "", "corporate targets in live pipeline"],
-                    ["1", "st", "corporate membership deal closed"],
-                    ["321", "", "verified decision-makers surfaced"],
-                  ].map(([n, suffix, d]) => (
-                    <div key={d} className="glow-cell bg-[#0B0B0C]/80 p-7">
-                      <div data-count={n} data-suffix={suffix} className="font-display text-4xl font-bold tracking-tight md:text-5xl" style={{ color: ACCENT }}>{n}{suffix}</div>
-                      <p className="mt-3 text-[15px] leading-[1.65] text-[#B3B1A8]">{d}</p>
-                    </div>
-                  ))}
-                </div>
-                <p className="mt-6 font-mono text-[12px] uppercase tracking-[0.18em] text-[#A5A39B]">
-                  Anchor client · every particle above is one of the 321
-                </p>
+        {/* ============ 04 PROOF — WHO WE'VE WORKED WITH ============ */}
+        <section id="proof" data-forge="7:8" className="relative py-28 md:py-36">
+          <div className="mx-auto w-full max-w-[1180px] px-5 md:px-8">
+            <div data-repel className="scrim">
+              <Label>04 — Proof</Label>
+              <h2 data-reveal className="text-shadow-editorial mt-6 max-w-[22ch] font-display font-bold leading-[1.02] tracking-[-0.02em]" style={{ fontSize: "clamp(2rem, 4.6vw, 3.4rem)" }}>
+                Who we’ve been in the <span style={{ color: ACCENT }}>engine room</span> with.
+              </h2>
+            </div>
+
+            {/* revolving credential band — real logos, monochrome at rest, color on hover */}
+            <div data-reveal className="marquee mt-12 border-y border-[#1C1C1F] py-9" aria-label="Companies we have worked with">
+              <div className="marquee-track">
+                {[0, 1].map((half) => (
+                  <div key={half} className="marquee-half" aria-hidden={half === 1}>
+                    {[0, 1, 2].map((rep) => (
+                      <div key={rep} className="flex items-center gap-[4.5rem]">
+                        <img src={`${BASE}/logos/supperclub.png`} alt={half === 0 && rep === 0 ? "SupperClub Global" : ""} className="logo-tile h-14 w-auto" loading="lazy" />
+                        <img src={`${BASE}/logos/flapkap.svg`} alt={half === 0 && rep === 0 ? "FlapKap" : ""} className="logo-tile logo-mono h-9 w-auto" loading="lazy" />
+                      </div>
+                    ))}
+                  </div>
+                ))}
               </div>
+            </div>
+
+            <div data-repel className="scrim mt-12 max-w-[46rem]">
+              <p data-reveal className="max-w-[56ch] text-[17px] leading-[1.7] text-[#C9C7BF]">
+                For SupperClub — the anchor client — we stood up the outbound engine, the
+                targeting, and the corporate-membership pipeline. The meetings started landing.
+              </p>
+              <div data-reveal className="glow-grid mt-8 grid gap-px overflow-hidden border border-[#26262A] bg-[#26262A] sm:grid-cols-3">
+                {[
+                  ["16", "", "corporate targets in live pipeline"],
+                  ["1", "st", "corporate membership deal closed"],
+                  ["321", "", "verified decision-makers surfaced"],
+                ].map(([n, suffix, d]) => (
+                  <div key={d} className="glow-cell bg-[#0B0B0C]/80 p-6">
+                    <div data-count={n} data-suffix={suffix} className="font-display text-3xl font-bold tracking-tight md:text-4xl" style={{ color: ACCENT }}>{n}{suffix}</div>
+                    <p className="mt-2 text-[15px] leading-[1.65] text-[#B3B1A8]">{d}</p>
+                  </div>
+                ))}
+              </div>
+              <p data-reveal className="mt-5 font-mono text-[12px] uppercase tracking-[0.18em] text-[#A5A39B]">
+                Every particle behind this section is one of the 321
+              </p>
             </div>
           </div>
         </section>

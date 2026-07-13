@@ -133,3 +133,42 @@ button:focus-visible {
     background: radial-gradient(closest-side, rgba(11, 11, 12, 0.93) 0%, rgba(11, 11, 12, 0.72) 60%, rgba(11, 11, 12, 0) 100%);
   }
 }
+
+/* revolving credential band — seamless two-half marquee */
+.marquee {
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent);
+}
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee-scroll 30s linear infinite;
+  will-change: transform;
+}
+.marquee:hover .marquee-track { animation-play-state: paused; }
+.marquee-half {
+  display: flex;
+  align-items: center;
+  gap: 4.5rem;
+  padding-right: 4.5rem; /* equals the gap — kills the off-by-gap seam */
+}
+@keyframes marquee-scroll { to { transform: translateX(-50%); } }
+
+/* logos: one warm tonal family at rest, true brand identity on hover
+   (kimi LOGO_BAND_BEST: gold preserved but tamed; wordmark baked warm off-white) */
+.logo-tile {
+  filter: saturate(0.85) brightness(0.94) contrast(1.05);
+  opacity: 0.88;
+  transition: filter 0.35s ease, opacity 0.35s ease;
+}
+.logo-tile:hover { filter: saturate(1.1) brightness(1.06); opacity: 1; }
+.logo-mono {
+  filter: brightness(0) saturate(100%) invert(90%) sepia(10%) saturate(250%) hue-rotate(350deg) brightness(1.1) contrast(0.95);
+  opacity: 0.75;
+}
+.logo-mono:hover { filter: none; opacity: 1; }
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track { animation: none; }
+}

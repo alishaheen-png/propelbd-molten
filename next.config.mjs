@@ -5,6 +5,10 @@ const base = process.env.PAGES_BASE ?? "";
 
 const nextConfig = {
   output: "export",
+  env: {
+    // raw <img> tags don't get basePath auto-prefixed — bridge it to the client
+    NEXT_PUBLIC_BASE_PATH: base,
+  },
   distDir: "dist",
   basePath: base,
   assetPrefix: base,
