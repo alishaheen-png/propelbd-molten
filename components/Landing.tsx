@@ -30,7 +30,7 @@ const ENGINE_BEATS = [
 
 function Label({ children }: { children: React.ReactNode }) {
   return (
-    <span className="font-mono text-[12px] uppercase tracking-[0.18em] text-[#A5A39B]">
+    <span className="font-mono text-[13px] uppercase tracking-[0.18em] text-[#AEACA3]">
       {children}
     </span>
   );
@@ -136,7 +136,7 @@ export default function Landing() {
         const blocks = Array.from(beatsWrap.current.querySelectorAll<HTMLElement>(".beat-block"));
         const rail = Array.from(engineSec.querySelectorAll<HTMLElement>(".beat-tick"));
         const setters = blocks.map((b) => gsap.quickSetter(b, "opacity"));
-        const ySetters = blocks.map((b) => gsap.quickSetter(b, "y", "px"));
+        const xSetters = blocks.map((b) => gsap.quickSetter(b, "x", "px"));
         ScrollTrigger.create({
           trigger: engineSec,
           start: "top top",
@@ -149,7 +149,7 @@ export default function Landing() {
               // tight window: one beat readable at a time, clean dead-zone between
               const o = Math.max(0, 1 - Math.pow(d * 2.2, 6));
               setters[i](o);
-              ySetters[i]((p - c) * -80);
+              xSetters[i]((c - p) * 220); // beats step in from the right, exit left
             });
             const active = Math.min(blocks.length - 1, Math.floor(p * blocks.length));
             rail.forEach((t, i) => {
@@ -249,7 +249,7 @@ export default function Landing() {
               <div data-hero className="mt-5 font-mono text-[12px] uppercase tracking-[0.22em]" style={{ color: ACCENT }}>
                 AI-run · Operator-deep · One client at a time
               </div>
-              <p data-hero className="mt-7 max-w-[42ch] text-[17px] leading-[1.65] text-[#C2C0B8] md:text-[19px]">
+              <p data-hero className="mt-7 max-w-[42ch] text-[18px] leading-[1.7] text-[#C9C7BF] md:text-[20px]">
                 PropelBD installs the AI-powered business-development engine for UAE companies
                 behind on AI — lead-gen, outreach, sales, the backend strategy. We build it,
                 prove it works, then it runs.
@@ -288,7 +288,7 @@ export default function Landing() {
                     <div key={i} className="problem-line grid grid-cols-[auto_1fr] items-baseline gap-x-5 md:grid-cols-[3rem_13rem_1fr] md:gap-x-8">
                       <div className="font-mono text-[13px] text-[#A5A39B]">{String(i + 1).padStart(2, "0")}</div>
                       <div className="font-display text-lg font-semibold tracking-tight md:text-xl">{t}</div>
-                      <p className="col-start-2 text-[16px] leading-[1.65] text-[#C2C0B8] md:col-start-3">{d}</p>
+                      <p className="col-start-2 text-[17px] leading-[1.7] text-[#C9C7BF] md:col-start-3">{d}</p>
                     </div>
                   ))}
                 </div>
@@ -322,7 +322,7 @@ export default function Landing() {
                       <div key={i} className="beat-block absolute inset-x-0 top-0 opacity-0">
                         <div className="font-mono text-[13px]" style={{ color: ACCENT }}>{String(i + 1).padStart(2, "0")} / 05</div>
                         <h3 className="mt-3 font-display text-3xl font-semibold tracking-tight md:text-4xl">{t}</h3>
-                        <p className="mt-4 max-w-[38ch] text-[16px] leading-[1.65] text-[#C2C0B8]">{d}</p>
+                        <p className="mt-4 max-w-[38ch] text-[17px] leading-[1.7] text-[#C9C7BF]">{d}</p>
                         <p className="mt-3 max-w-[38ch] font-mono text-[12px] uppercase tracking-[0.14em] text-[#A5A39B]">{sub}</p>
                       </div>
                     ))}
@@ -341,23 +341,23 @@ export default function Landing() {
             <div className="mx-auto w-full max-w-[1180px] px-5 md:px-8">
               <div data-repel className="scrim py-10">
                 <Label>03 — Why us</Label>
-                <div className="mt-10 grid gap-12 md:grid-cols-2 md:gap-16">
-                  <div>
-                    <div className="font-mono text-[12px] uppercase tracking-[0.18em] text-[#77756D]">Them</div>
-                    <div className="mt-5 space-y-4">
-                      {["Agencies report hours.", "Decks, theater, activity.", "Paid to look busy."].map((l, i) => (
-                        <p key={i} data-reveal className="text-shadow-editorial font-display text-2xl font-semibold leading-[1.1] tracking-[-0.015em] text-[#8B897F] md:text-3xl">{l}</p>
-                      ))}
+                <div className="mt-10 hidden grid-cols-[1fr_auto_1fr] items-baseline gap-x-8 md:grid">
+                  <div className="font-mono text-[13px] uppercase tracking-[0.18em] text-[#B3B1A6]">Every other agency</div>
+                  <div />
+                  <div className="font-mono text-[13px] uppercase tracking-[0.18em]" style={{ color: ACCENT }}>PropelBD</div>
+                </div>
+                <div className="mt-6 space-y-8">
+                  {[
+                    ["Agencies report hours.", "We report pipeline."],
+                    ["Decks, theater, activity.", "Meetings that land."],
+                    ["Paid to look busy.", "Revenue is the only scoreboard."],
+                  ].map(([a, b], i) => (
+                    <div key={i} data-reveal className="grid items-baseline gap-2 border-b border-[#1C1C1F] pb-8 md:grid-cols-[1fr_auto_1fr] md:gap-x-8">
+                      <p className="text-shadow-editorial font-display text-xl font-semibold leading-[1.15] tracking-[-0.015em] text-[#B3B1A6] md:text-2xl">{a}</p>
+                      <span aria-hidden className="hidden font-mono text-[15px] md:block" style={{ color: ACCENT }}>→</span>
+                      <p className="text-shadow-editorial font-display text-2xl font-semibold leading-[1.15] tracking-[-0.015em] text-[#ECEAE3] md:text-3xl">{b}</p>
                     </div>
-                  </div>
-                  <div>
-                    <div className="font-mono text-[12px] uppercase tracking-[0.18em]" style={{ color: ACCENT }}>PropelBD</div>
-                    <div className="mt-5 space-y-4">
-                      {["We report pipeline.", "Meetings that land.", "Revenue is the only scoreboard."].map((l, i) => (
-                        <p key={i} data-reveal className="text-shadow-editorial font-display text-2xl font-semibold leading-[1.1] tracking-[-0.015em] text-[#ECEAE3] md:text-3xl">{l}</p>
-                      ))}
-                    </div>
-                  </div>
+                  ))}
                 </div>
               </div>
             </div>
@@ -373,7 +373,7 @@ export default function Landing() {
                 <h2 className="text-shadow-editorial mt-6 font-display font-bold leading-[1.02] tracking-[-0.02em]" style={{ fontSize: "clamp(2rem, 4.6vw, 3.4rem)" }}>
                   We built the engine for <span style={{ color: ACCENT }}>SupperClub</span>.
                 </h2>
-                <p className="mt-6 max-w-[52ch] text-[16px] leading-[1.65] text-[#C2C0B8]">
+                <p className="mt-6 max-w-[52ch] text-[17px] leading-[1.7] text-[#C9C7BF]">
                   A UAE business that was behind on AI. We stood up the outbound engine, the
                   targeting, and the corporate-membership pipeline — and the meetings started
                   landing. The same playbook we install for you.
@@ -386,7 +386,7 @@ export default function Landing() {
                   ].map(([n, suffix, d]) => (
                     <div key={d} className="glow-cell bg-[#0B0B0C]/80 p-7">
                       <div data-count={n} data-suffix={suffix} className="font-display text-4xl font-bold tracking-tight md:text-5xl" style={{ color: ACCENT }}>{n}{suffix}</div>
-                      <p className="mt-3 text-[14px] leading-[1.6] text-[#A9A79E]">{d}</p>
+                      <p className="mt-3 text-[15px] leading-[1.65] text-[#B3B1A8]">{d}</p>
                     </div>
                   ))}
                 </div>
@@ -406,11 +406,11 @@ export default function Landing() {
               <h2 data-reveal className="text-shadow-editorial mt-6 max-w-[24ch] font-display font-bold leading-[1.02] tracking-[-0.02em]" style={{ fontSize: "clamp(2rem, 5vw, 3.4rem)" }}>
                 UAE companies <span className="text-[#A5A39B]">behind on AI.</span>
               </h2>
-              <p data-reveal className="mt-7 max-w-[54ch] text-[17px] leading-[1.65] text-[#C2C0B8]">
+              <p data-reveal className="mt-7 max-w-[54ch] text-[18px] leading-[1.7] text-[#C9C7BF]">
                 Real products, real customers, no repeatable pipeline. If growth still depends
                 on referrals, this is for you.
               </p>
-              <p data-reveal className="mt-5 max-w-[54ch] text-[15px] leading-[1.65] text-[#A5A39B]">
+              <p data-reveal className="mt-5 max-w-[54ch] text-[16px] leading-[1.7] text-[#AEACA3]">
                 Not for funded AI-native startups that already live in this world.
               </p>
             </div>
@@ -424,14 +424,14 @@ export default function Landing() {
               <h2 data-reveal className="text-shadow-editorial font-display font-bold leading-[1.0] tracking-[-0.02em]" style={{ fontSize: "clamp(2.4rem, 6vw, 4.6rem)" }}>
                 Let’s build your <span style={{ color: ACCENT }}>engine.</span>
               </h2>
-              <p data-reveal className="mx-auto mt-7 max-w-[44ch] text-[17px] leading-[1.65] text-[#C2C0B8]">
+              <p data-reveal className="mx-auto mt-7 max-w-[44ch] text-[18px] leading-[1.7] text-[#C9C7BF]">
                 A 20-minute call: we map where your revenue is leaking and what we’d
                 build first. You keep the map. No deck. No pitch theater.
               </p>
               <a data-reveal data-cta-heat href="mailto:alishaheen@supperclubme.com?subject=PropelBD%20%E2%80%94%20Revenue%20teardown" className="mt-10 inline-flex items-center gap-2 px-8 py-4 font-mono text-[13px] uppercase tracking-[0.14em] text-[#0B0B0C] transition-transform duration-200 hover:-translate-y-0.5 cursor-pointer" style={{ backgroundColor: ACCENT }}>
                 Book a free revenue teardown →
               </a>
-              <p data-reveal className="mt-8 text-[14px] leading-[1.6] text-[#A5A39B]">
+              <p data-reveal className="mt-8 text-[15px] leading-[1.65] text-[#AEACA3]">
                 You work directly with the founder — the person who builds the engine,
                 runs it, and answers for it.
               </p>

@@ -158,11 +158,11 @@ const VERT = /* glsl */ `
     }
     gl_Position = clip;
 
-    // fake DOF: size + softness by distance from focus plane
+    // fake DOF: distance dims, never balloons (big blurred points read as blobs)
     float focus = smoothstep(3.0, 9.5, -mv.z);
     gl_PointSize = aSize * uPixelRatio * uPerf * (1.0 + vPulse * 2.4 + push * 1.4 + uIgnite * 0.15)
-                   * (5.4 / -mv.z) * (1.0 + focus * 1.8);
-    vHeat *= 1.0 - focus * 0.45;
+                   * (5.4 / -mv.z) * (1.0 + focus * 0.4);
+    vHeat *= 1.0 - focus * 0.5;
   }
 `;
 
@@ -177,14 +177,15 @@ const FRAG = /* glsl */ `
 
   void main() {
     float d = length(gl_PointCoord - 0.5);
-    float alpha = 1.0 - smoothstep(0.08, 0.5, d);
-    float core  = 1.0 - smoothstep(0.0, 0.22, d);
+    // sharp dart: hard bright core, short falloff — no soft bokeh halo
+    float alpha = 1.0 - smoothstep(0.04, 0.34, d);
+    float core  = 1.0 - smoothstep(0.0, 0.13, d);
     float heat = clamp(vHeat, 0.0, 1.0);
     vec3 ember = mix(uCool, uMid, smoothstep(0.12, 0.7, heat));
-    ember = mix(ember, uHot, core * min(vHeat * 0.6, 1.4) + vPulse);
+    ember = mix(ember, uHot, core * min(vHeat * 0.55, 1.2) + vPulse);
     vec3 ash = vec3(0.29, 0.275, 0.25) * (0.4 + heat * 0.4);
     vec3 col = mix(ember, ash, vAsh);
-    float a = alpha * (0.32 + heat * 0.6 + vPulse) * (1.0 - vAsh * 0.55);
+    float a = alpha * (0.4 + heat * 0.6 + vPulse) * (1.0 - vAsh * 0.55);
     if (a < 0.012) discard;
     fragColor = vec4(col, a);
   }
@@ -251,24 +252,25 @@ function bakeFormations(count: number, texW: number, rows: number) {
     set(1, i, gauss() * 6.4, gauss() * 4.0, gauss() * 3.2 - 0.6,
       Math.random() < 0.68 ? -(0.15 + Math.random() * 0.2) : 0.2 + Math.random() * 0.25);
 
-    // 2 RETICLE — targeting: two rings + crosshair spokes + sparse lattice
+    // 2 RETICLE — targeting: two hairline rings + crosshair + 24 tick marks
     {
       const pick = r01;
       let x = 0, y = 0, z = 0, w = 0.5;
-      if (pick < 0.38) { const a = Math.random() * TAU; const rr = 2.1 + gauss() * 0.05; x = Math.cos(a) * rr; y = Math.sin(a) * rr; z = gauss() * 0.12; w = 0.85; }
-      else if (pick < 0.6) { const a = Math.random() * TAU; const rr = 3.0 + gauss() * 0.05; x = Math.cos(a) * rr; y = Math.sin(a) * rr; z = gauss() * 0.12; w = 0.45; }
-      else if (pick < 0.82) { const s = Math.floor(Math.random() * 4); const t = Math.random() * 2.9; const a = (s / 4) * TAU + Math.PI / 4; x = Math.cos(a) * t; y = Math.sin(a) * t; z = gauss() * 0.1; w = 0.6; }
-      else { x = (Math.random() - 0.5) * 7.5; y = (Math.random() - 0.5) * 4.6; z = gauss() * 0.4 - 0.4; w = 0.14; }
+      if (pick < 0.34) { const a = Math.random() * TAU; const rr = 2.1 + gauss() * 0.02; x = Math.cos(a) * rr; y = Math.sin(a) * rr; z = gauss() * 0.03; w = 0.9; }
+      else if (pick < 0.55) { const a = Math.random() * TAU; const rr = 3.0 + gauss() * 0.02; x = Math.cos(a) * rr; y = Math.sin(a) * rr; z = gauss() * 0.03; w = 0.45; }
+      else if (pick < 0.75) { const s = Math.floor(Math.random() * 4); const t = 0.25 + Math.random() * 2.7; const a = (s / 4) * TAU + Math.PI / 4; x = Math.cos(a) * t; y = Math.sin(a) * t; z = gauss() * 0.03; w = 0.6; }
+      else if (pick < 0.92) { const s = Math.floor(Math.random() * 24); const a = (s / 24) * TAU; const t = 3.0 + Math.random() * 0.22; x = Math.cos(a) * t; y = Math.sin(a) * t; z = gauss() * 0.02; w = 0.75; }
+      else { x = (Math.random() - 0.5) * 7.5; y = (Math.random() - 0.5) * 4.6; z = gauss() * 0.4 - 0.4; w = 0.12; }
       set(2, i, x, y, z - 0.2, w);
     }
 
-    // 3 FUNNEL — lead-gen: wide rain narrowing to a bright stream
+    // 3 FUNNEL — lead-gen: spiral rain tightening into a hairline stream
     {
       const t = Math.random();
       const y = 2.6 - t * 5.0;
       const shrink = Math.pow(1 - t, 1.6);
-      const a = Math.random() * TAU + t * 5.0;
-      const rr = (0.22 + shrink * 2.9) * (0.75 + Math.random() * 0.4);
+      const a = Math.random() * TAU + t * 9.0;
+      const rr = (0.1 + shrink * 2.7) * (0.92 + Math.random() * 0.16);
       set(3, i, Math.cos(a) * rr, y, Math.sin(a) * rr - 0.3, 0.18 + t * 0.85);
     }
 
@@ -280,7 +282,7 @@ function bakeFormations(count: number, texW: number, rows: number) {
       const base = (arc / 9) * TAU;
       const reach = 0.4 + Math.sin(t * Math.PI) * (2.4 + (arc % 4) * 0.35);
       const a = base + t * 0.9;
-      set(4, i, Math.cos(a) * reach, Math.sin(a) * reach * 0.72, gauss() * 0.3 - 0.3,
+      set(4, i, Math.cos(a) * reach, Math.sin(a) * reach * 0.72, gauss() * 0.08 - 0.3,
         (ret ? 1.15 : 0.4) * (0.5 + t * 0.7));
     }
 
@@ -288,26 +290,39 @@ function bakeFormations(count: number, texW: number, rows: number) {
     {
       const ringPick = Math.random();
       let rr: number, wv: number, ecc: number;
-      if (ringPick < 0.4) { rr = 0.9 + gauss() * 0.04; wv = 1.05; ecc = 1.0; }
-      else if (ringPick < 0.7) { rr = 1.7 + gauss() * 0.06; wv = 0.55; ecc = 1.25; }
-      else { rr = 2.6 + gauss() * 0.08; wv = 0.3; ecc = 1.45; }
+      if (ringPick < 0.4) { rr = 0.9 + gauss() * 0.015; wv = 1.05; ecc = 1.0; }
+      else if (ringPick < 0.7) { rr = 1.7 + gauss() * 0.02; wv = 0.55; ecc = 1.25; }
+      else { rr = 2.6 + gauss() * 0.03; wv = 0.3; ecc = 1.45; }
       const a = Math.random() * TAU;
-      set(5, i, Math.cos(a) * rr * ecc, Math.sin(a) * rr * 0.8, gauss() * 0.2 - 0.25, wv);
+      set(5, i, Math.cos(a) * rr * ecc, Math.sin(a) * rr * 0.8, gauss() * 0.04 - 0.25, wv);
     }
 
-    // 6 CORE — backend: torus-knot nucleus + halo, the running engine
+    // 6 CORE — backend: the reactor. Dense nucleus + 3 tilted hairline rings
+    // + 12 radial spokes. Precision machine, not a flower.
     {
-      if (r01 < 0.62) {
-        const t = Math.random() * TAU;
-        const p = 2, q = 3, R = 1.5, rTube = 0.42;
-        const qt = q * t, pt = p * t;
-        const cx = (R + rTube * Math.cos(qt)) * Math.cos(pt);
-        const cy = (R + rTube * Math.cos(qt)) * Math.sin(pt);
-        const cz = rTube * Math.sin(qt);
-        set(6, i, cx + gauss() * 0.05, cy * 0.85 + gauss() * 0.05, cz + gauss() * 0.05 - 0.2, 0.9 + Math.random() * 0.5);
+      if (r01 < 0.3) {
+        const a = Math.random() * TAU;
+        const ph = Math.acos(2 * Math.random() - 1);
+        const rr = 0.5 + gauss() * 0.03;
+        set(6, i, rr * Math.sin(ph) * Math.cos(a), rr * Math.sin(ph) * Math.sin(a) * 0.9, rr * Math.cos(ph) - 0.2, 1.3 + Math.random() * 0.4);
+      } else if (r01 < 0.72) {
+        const ring = Math.floor(Math.random() * 3);
+        const R = [1.15, 1.65, 2.15][ring];
+        const tilt = [0.5, -0.35, 0.15][ring];
+        const a = Math.random() * TAU;
+        const x = Math.cos(a) * R + gauss() * 0.015;
+        const y = Math.sin(a) * R * 0.82 + gauss() * 0.015;
+        const z = gauss() * 0.015;
+        const ct = Math.cos(tilt), st = Math.sin(tilt);
+        set(6, i, x, y * ct - z * st, y * st + z * ct - 0.2, 0.85 + (ring === 0 ? 0.3 : 0));
+      } else if (r01 < 0.92) {
+        const s = Math.floor(Math.random() * 12);
+        const t = 0.55 + Math.random() * 1.6;
+        const a = (s / 12) * TAU;
+        set(6, i, Math.cos(a) * t, Math.sin(a) * t * 0.82, gauss() * 0.02 - 0.2, 0.55);
       } else {
-        const a = Math.random() * TAU; const rr = 2.2 + Math.pow(Math.random(), 2) * 1.8;
-        set(6, i, Math.cos(a) * rr, Math.sin(a) * rr * 0.75, gauss() * 0.5 - 0.3, 0.12 + Math.random() * 0.2);
+        const a = Math.random() * TAU; const rr = 2.4 + Math.pow(Math.random(), 2) * 1.4;
+        set(6, i, Math.cos(a) * rr, Math.sin(a) * rr * 0.72, gauss() * 0.4 - 0.3, 0.1 + Math.random() * 0.12);
       }
     }
 
@@ -335,7 +350,7 @@ function bakeFormations(count: number, texW: number, rows: number) {
     // 9 VORTEX — molten ring around the close (never crossing center)
     {
       const a = Math.random() * TAU;
-      const R = 2.7, tube = 0.28 + Math.pow(Math.random(), 2) * 0.55;
+      const R = 2.7, tube = 0.13 + Math.pow(Math.random(), 2) * 0.3;
       const b = Math.random() * TAU;
       const rr = R + Math.cos(b) * tube;
       set(9, i, Math.cos(a) * rr, Math.sin(a) * rr * 0.62, Math.sin(b) * tube - 0.2,
@@ -407,7 +422,8 @@ export default function MoltenOrganism() {
     for (let i = 0; i < COUNT; i++) {
       idx[i] = i;
       seeds[i] = Math.random();
-      sizes[i] = 0.6 + Math.pow(Math.random(), 2.4) * 2.7;
+      // fine darts, not bokeh blobs: tight size range, rare medium sparks
+      sizes[i] = 0.45 + Math.pow(Math.random(), 3.2) * 1.35;
     }
     const geo = new THREE.BufferGeometry();
     geo.setAttribute("position", new THREE.BufferAttribute(zero, 3));
@@ -430,9 +446,9 @@ export default function MoltenOrganism() {
       uPerf: { value: 1 },
       uShiftX: { value: isCoarse ? 0 : 1.9 },
       uRepel: { value: [new THREE.Vector4(0, 0, 0, 0), new THREE.Vector4(0, 0, 0, 0), new THREE.Vector4(0, 0, 0, 0)] },
-      uCool: { value: new THREE.Color("#7A1F0A") },
+      uCool: { value: new THREE.Color("#621307") },
       uMid: { value: new THREE.Color("#FF5A1F") },
-      uHot: { value: new THREE.Color("#FFD9A0") },
+      uHot: { value: new THREE.Color("#FF9B5E") }, // hot orange — no gold/yellow drift
     };
 
     const mat = new THREE.ShaderMaterial({
