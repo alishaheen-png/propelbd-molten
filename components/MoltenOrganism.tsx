@@ -297,31 +297,28 @@ function bakeFormations(count: number, texW: number, rows: number) {
       set(5, i, Math.cos(a) * rr * ecc, Math.sin(a) * rr * 0.8, gauss() * 0.04 - 0.25, wv);
     }
 
-    // 6 CORE — backend: the reactor. Dense nucleus + 3 tilted hairline rings
-    // + 12 radial spokes. Precision machine, not a flower.
+    // 6 CORE — backend: the gyroscope. Bright nucleus + 3 orthogonal hairline
+    // rings on different planes (council-gated: precision machine, zero
+    // organic read; spokes dropped — their wedges echoed the flower).
     {
       if (r01 < 0.3) {
         const a = Math.random() * TAU;
         const ph = Math.acos(2 * Math.random() - 1);
         const rr = 0.5 + gauss() * 0.03;
         set(6, i, rr * Math.sin(ph) * Math.cos(a), rr * Math.sin(ph) * Math.sin(a) * 0.9, rr * Math.cos(ph) - 0.2, 1.3 + Math.random() * 0.4);
-      } else if (r01 < 0.72) {
+      } else if (r01 < 0.78) {
         const ring = Math.floor(Math.random() * 3);
-        const R = [1.15, 1.65, 2.15][ring];
-        const tilt = [0.5, -0.35, 0.15][ring];
+        const R = [1.35, 1.7, 2.05][ring];
         const a = Math.random() * TAU;
-        const x = Math.cos(a) * R + gauss() * 0.015;
-        const y = Math.sin(a) * R * 0.82 + gauss() * 0.015;
-        const z = gauss() * 0.015;
-        const ct = Math.cos(tilt), st = Math.sin(tilt);
-        set(6, i, x, y * ct - z * st, y * st + z * ct - 0.2, 0.85 + (ring === 0 ? 0.3 : 0));
-      } else if (r01 < 0.92) {
-        const s = Math.floor(Math.random() * 12);
-        const t = 0.55 + Math.random() * 1.6;
-        const a = (s / 12) * TAU;
-        set(6, i, Math.cos(a) * t, Math.sin(a) * t * 0.82, gauss() * 0.02 - 0.2, 0.55);
+        const c = Math.cos(a) * R, s = Math.sin(a) * R;
+        const j = () => gauss() * 0.015;
+        let x: number, y: number, z: number;
+        if (ring === 0) { x = c; y = s * 0.82; z = 0; }
+        else if (ring === 1) { x = c; y = 0; z = s; }
+        else { x = 0; y = c * 0.82; z = s; }
+        set(6, i, x + j(), y + j(), z + j() - 0.2, 0.9 + (ring === 0 ? 0.25 : 0));
       } else {
-        const a = Math.random() * TAU; const rr = 2.4 + Math.pow(Math.random(), 2) * 1.4;
+        const a = Math.random() * TAU; const rr = 2.3 + Math.pow(Math.random(), 2) * 1.5;
         set(6, i, Math.cos(a) * rr, Math.sin(a) * rr * 0.72, gauss() * 0.4 - 0.3, 0.1 + Math.random() * 0.12);
       }
     }
