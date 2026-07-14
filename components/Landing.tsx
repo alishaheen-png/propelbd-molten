@@ -413,21 +413,21 @@ export default function Landing() {
             <div className="mx-auto w-full max-w-[1180px] px-5 md:px-8">
               <div data-repel className="scrim py-10">
                 <Label>04 — Why us</Label>
-                <div className="mt-10 hidden grid-cols-[1fr_auto_1fr] items-baseline gap-x-8 md:grid">
-                  <div className="font-mono text-[13px] uppercase tracking-[0.18em] text-[#B3B1A6]">Every other agency</div>
-                  <div />
-                  <div className="font-mono text-[13px] uppercase tracking-[0.18em]" style={{ color: ACCENT }}>PropelBD</div>
-                </div>
-                <div className="mt-6 space-y-8">
+                <div className="mt-8 space-y-9">
                   {[
                     ["Agencies report hours.", "We report pipeline."],
                     ["Decks, theater, activity.", "Meetings that land."],
                     ["Paid to look busy.", "Revenue is the only scoreboard."],
                   ].map(([a, b], i) => (
-                    <div key={i} data-reveal className="grid items-baseline gap-2 border-b border-[#1C1C1F] pb-8 md:grid-cols-[1fr_auto_1fr] md:gap-x-8">
-                      <p className="text-shadow-editorial font-display text-xl font-semibold leading-[1.15] tracking-[-0.015em] text-[#B3B1A6] md:text-2xl">{a}</p>
-                      <span aria-hidden className="hidden font-mono text-[15px] md:block" style={{ color: ACCENT }}>→</span>
-                      <p className="text-shadow-editorial font-display text-2xl font-semibold leading-[1.15] tracking-[-0.015em] text-[#ECEAE3] md:text-3xl">{b}</p>
+                    <div key={i} data-reveal className="border-b border-[#1C1C1F] pb-9">
+                      <div className="flex items-baseline gap-4">
+                        <span className="vs-chip vs-them">Every other agency</span>
+                        <p className="font-display text-lg font-medium leading-[1.2] text-[#8B897F] line-through decoration-[#3A2A20] decoration-2 md:text-xl">{a}</p>
+                      </div>
+                      <div className="mt-3 flex items-baseline gap-4">
+                        <span className="vs-chip vs-us">PropelBD</span>
+                        <p className="text-shadow-editorial font-display text-2xl font-semibold leading-[1.15] tracking-[-0.015em] text-[#ECEAE3] md:text-3xl">{b}</p>
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -451,10 +451,13 @@ export default function Landing() {
               <div className="marquee-track">
                 {[0, 1].map((half) => (
                   <div key={half} className="marquee-half" aria-hidden={half === 1}>
-                    {[0, 1, 2].map((rep) => (
+                    {[0, 1].map((rep) => (
                       <div key={rep} className="flex items-center gap-[4.5rem]">
                         <img src={`${BASE}/logos/supperclub.png`} alt={half === 0 && rep === 0 ? "SupperClub Global" : ""} className="logo-tile h-14 w-auto" loading="lazy" />
+                        <span className="logo-word">Hassan Allam Properties</span>
                         <img src={`${BASE}/logos/flapkap.svg`} alt={half === 0 && rep === 0 ? "FlapKap" : ""} className="logo-tile logo-mono h-9 w-auto" loading="lazy" />
+                        <span className="logo-word">Bold Routes</span>
+                        <span className="logo-word">Qedreh &amp; Mansaf</span>
                       </div>
                     ))}
                   </div>

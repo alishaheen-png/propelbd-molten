@@ -186,3 +186,11 @@ a[data-cta-heat]:hover { transform: translateY(-2px) scale(1.015); box-shadow: 0
   --t-body: 17px;
   --t-small: 14px;
 }
+
+/* worked-at wordmark tiles in the credential band */
+.logo-word { font-family: var(--font-display-stack); font-size: 19px; font-weight: 600; letter-spacing: .04em; color: #B3B1A8; white-space: nowrap; opacity: .8; }
+
+/* why-us comparison chips: unmistakable them-vs-us labeling on every line */
+.vs-chip { flex-shrink: 0; font-family: var(--font-jetbrains), monospace; font-size: 10px; text-transform: uppercase; letter-spacing: .14em; padding: 3px 8px; border-radius: 2px; }
+.vs-them { color: #77756D; border: 1px solid #26262A; }
+.vs-us { color: #0B0B0C; background: #FF5A1F; font-weight: 700; }
