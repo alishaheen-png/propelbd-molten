@@ -5,6 +5,7 @@ export const metadata: Metadata = {
   title: "Privacy — PropelBD",
   description: "PropelBD privacy policy.",
   robots: { index: false },
+  alternates: { canonical: "/privacy" },
 };
 
 export default function Privacy() {

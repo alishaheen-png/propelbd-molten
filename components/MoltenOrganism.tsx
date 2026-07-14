@@ -112,7 +112,7 @@ const VERT = /* glsl */ `
 
     // the machine formations dock right of the text column
     float engineWin = smoothstep(1.6, 2.1, uPhase) * (1.0 - smoothstep(5.9, 6.5, uPhase));
-    float constWin  = smoothstep(7.3, 7.9, uPhase) * (1.0 - smoothstep(8.05, 8.5, uPhase));
+    float constWin  = smoothstep(7.3, 7.9, uPhase) * (1.0 - smoothstep(7.95, 8.15, uPhase));   // fully home before FAQ (8.2)
     pos.x += (engineWin + constWin) * uShiftX;
 
     // mouse: molten repulsion

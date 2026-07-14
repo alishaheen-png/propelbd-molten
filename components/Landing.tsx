@@ -20,6 +20,9 @@ const MoltenOrganism = dynamic(() => import("./MoltenOrganism"), { ssr: false })
 
 const ACCENT = "#FF5A1F";
 const BASE = process.env.NEXT_PUBLIC_BASE_PATH || "";
+// Ali-gated offer terms (Hormozi risk-reversal). Flip to true on Ali's word — copy ships instantly.
+const SHOW_GUARANTEE = false;
+const SHOW_PAY_PER_MEETING = false;
 
 const ENGINE_BEATS = [
   ["Targeting", "ICP, geography, STP — who to chase and why.", "The organism locks a reticle on the market."],
@@ -367,6 +370,18 @@ export default function Landing() {
                   </div>
                 ))}
               </div>
+              {SHOW_GUARANTEE && (
+                <p data-reveal className="mt-8 border-l-2 pl-5 font-display text-xl font-semibold leading-snug text-[#ECEAE3] md:text-2xl" style={{ borderColor: ACCENT }}>
+                  If we don’t book at least one qualified meeting in the first 30 days,
+                  cancel — and keep the map.
+                </p>
+              )}
+              {SHOW_PAY_PER_MEETING && (
+                <p data-reveal className="mt-4 max-w-[54ch] text-[16px] leading-[1.7] text-[#C9C7BF]">
+                  Prefer pure performance? A pay-per-qualified-meeting option is available
+                  after the teardown.
+                </p>
+              )}
               <div data-reveal className="mt-9 flex flex-wrap items-center gap-5">
                 <a href="#contact" className="inline-flex items-center gap-2 px-6 py-3.5 font-mono text-[13px] uppercase tracking-[0.14em] text-[#0B0B0C] transition-transform duration-200 hover:-translate-y-0.5 cursor-pointer" style={{ backgroundColor: ACCENT }}>
                   Book the free revenue teardown →

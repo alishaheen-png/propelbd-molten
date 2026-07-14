@@ -26,7 +26,7 @@ const jetbrains = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://propelbd.com"),
+  metadataBase: new URL("https://propelbd.ai"),
   title: "PropelBD — The revenue engine your business is missing.",
   description: "PropelBD installs the AI-powered business-development engine for UAE companies behind on AI. We build it, prove it works, then it runs.",
   openGraph: {
@@ -57,7 +57,7 @@ export default function RootLayout({
     name: "PropelBD",
     description:
       "Fractional AI-powered business development for UAE companies: lead generation, outreach, sales, and the backend strategy. Built, proven, then run.",
-    url: "https://propelbd.com",
+    url: "https://propelbd.ai",
     areaServed: [
       { "@type": "City", name: "Dubai" },
       { "@type": "City", name: "Abu Dhabi" },
