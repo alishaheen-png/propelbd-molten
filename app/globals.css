@@ -172,3 +172,4 @@ button:focus-visible {
 @media (prefers-reduced-motion: reduce) {
   .marquee-track { animation: none; }
 }
+summary:focus-visible { outline: 2px solid #FF5A1F; outline-offset: 3px; border-radius: 1px; }

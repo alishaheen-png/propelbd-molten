@@ -89,7 +89,7 @@ const VERT = /* glsl */ `
     float inDust    = 1.0 - smoothstep(0.0, 1.0, uPhase);
     float inScatter = smoothstep(0.2, 1.0, uPhase) * (1.0 - smoothstep(1.0, 2.0, uPhase));
     float inSplit   = smoothstep(6.2, 7.0, uPhase) * (1.0 - smoothstep(7.0, 8.0, uPhase));
-    float inVortex  = smoothstep(8.2, 9.0, uPhase);
+    float inVortex  = smoothstep(8.4, 9.0, uPhase);   // CTA now starts at 8.4 (FAQ owns 8.2-8.4)
 
     // organic drift — violent in scatter + scroll turbulence, calm in formations
     float amp = 0.06 + inDust * 0.10 + inScatter * 0.42 + uTurb * 0.5;

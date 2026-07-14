@@ -185,6 +185,7 @@ export default function Landing() {
 
       // proof stats: pointer-following ember glow (hand-rolled, CSS-var driven)
       const glowGrid = root.current?.querySelector<HTMLElement>("#proof .glow-grid");
+      let glowCleanup: (() => void) | undefined;
       if (glowGrid) {
         const cells = Array.from(glowGrid.querySelectorAll<HTMLElement>(".glow-cell"));
         const onGlow = (e: PointerEvent) => {
@@ -195,6 +196,7 @@ export default function Landing() {
           });
         };
         glowGrid.addEventListener("pointermove", onGlow, { passive: true });
+        glowCleanup = () => glowGrid.removeEventListener("pointermove", onGlow);
       }
 
       // CTA molten pulse
@@ -209,6 +211,7 @@ export default function Landing() {
       document.fonts?.ready.then(() => ScrollTrigger.refresh());
 
       return () => {
+        glowCleanup?.();
         gsap.ticker.remove(ticker);
         lenis.destroy();
       };
@@ -529,7 +532,7 @@ export default function Landing() {
           <div className="font-display text-base font-bold">Propel<span style={{ color: ACCENT }}>BD</span></div>
           <div className="font-display text-[15px] italic text-[#A5A39B]">Your business, rebuilt to scale.</div>
           <div className="font-mono text-[11px] uppercase tracking-[0.18em] text-[#A5A39B]">
-            © {new Date().getFullYear()} PropelBD · Dubai · Abu Dhabi · <a href={`${BASE}/privacy`} className="underline-offset-4 hover:text-[#ECEAE3] hover:underline">Privacy</a>
+            © 2026 PropelBD · Dubai · Abu Dhabi · <a href={`${BASE}/privacy`} className="underline-offset-4 hover:text-[#ECEAE3] hover:underline">Privacy</a>
           </div>
         </div>
       </footer>
