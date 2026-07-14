@@ -173,3 +173,16 @@ button:focus-visible {
   .marquee-track { animation: none; }
 }
 summary:focus-visible { outline: 2px solid #FF5A1F; outline-offset: 3px; border-radius: 1px; }
+
+/* CTA micro-interaction: ember intensify on hover (kimi audit #8) */
+a[data-cta-heat] { transition: transform .2s ease, box-shadow .25s ease, filter .25s ease; }
+a[data-cta-heat]:hover { transform: translateY(-2px) scale(1.015); box-shadow: 0 0 54px rgba(255,90,31,.55); filter: brightness(1.06); }
+
+/* type scale discipline (kimi audit #3): shared display sizes */
+:root {
+  --t-hero: clamp(2.7rem, 8vw, 6.6rem);
+  --t-h2: clamp(2rem, 5vw, 3.6rem);
+  --t-h3: 1.5rem;
+  --t-body: 17px;
+  --t-small: 14px;
+}

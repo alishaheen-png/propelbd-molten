@@ -246,22 +246,21 @@ function bakeFormations(count: number, texW: number, rows: number) {
 
     // 0 DUST — cold ember dust, deep-Z spread
     set(0, i, gauss() * 5.6, gauss() * 3.2, gauss() * 3.4 - 0.6,
-      Math.random() < 0.1 ? 0.55 + Math.random() * 0.4 : 0.06 + Math.pow(Math.random(), 3) * 0.18);
+      Math.random() < 0.16 ? 0.7 + Math.random() * 0.45 : 0.12 + Math.pow(Math.random(), 3) * 0.26);
 
     // 1 SCATTER — entropy peak, mostly ash with dying embers
     set(1, i, gauss() * 6.4, gauss() * 4.0, gauss() * 3.2 - 0.6,
       Math.random() < 0.68 ? -(0.15 + Math.random() * 0.2) : 0.2 + Math.random() * 0.25);
 
-    // 2 RETICLE — targeting: two hairline rings + crosshair + 24 tick marks
+    // 2 TARGETING — no geometry (Ali: 'globe with a ring' read as a shape — kill it).
+    // A directional convergence: wide drift condensing toward one bright focal point.
     {
-      const pick = r01;
-      let x = 0, y = 0, z = 0, w = 0.5;
-      if (pick < 0.34) { const a = Math.random() * TAU; const rr = 2.1 + gauss() * 0.02; x = Math.cos(a) * rr; y = Math.sin(a) * rr; z = gauss() * 0.03; w = 0.9; }
-      else if (pick < 0.55) { const a = Math.random() * TAU; const rr = 3.0 + gauss() * 0.02; x = Math.cos(a) * rr; y = Math.sin(a) * rr; z = gauss() * 0.03; w = 0.45; }
-      else if (pick < 0.75) { const s = Math.floor(Math.random() * 4); const t = 0.25 + Math.random() * 2.7; const a = (s / 4) * TAU + Math.PI / 4; x = Math.cos(a) * t; y = Math.sin(a) * t; z = gauss() * 0.03; w = 0.6; }
-      else if (pick < 0.92) { const s = Math.floor(Math.random() * 24); const a = (s / 24) * TAU; const t = 3.0 + Math.random() * 0.22; x = Math.cos(a) * t; y = Math.sin(a) * t; z = gauss() * 0.02; w = 0.75; }
-      else { x = (Math.random() - 0.5) * 7.5; y = (Math.random() - 0.5) * 4.6; z = gauss() * 0.4 - 0.4; w = 0.12; }
-      set(2, i, x, y, z - 0.2, w);
+      const t = Math.pow(Math.random(), 1.7);           // density gradient toward focus
+      const a = Math.random() * TAU;
+      const rr = 0.15 + (1 - t) * 4.6;
+      const jitter = () => gauss() * (0.25 + (1 - t) * 0.6);
+      set(2, i, Math.cos(a) * rr + jitter(), Math.sin(a) * rr * 0.75 + jitter(), gauss() * 0.4 - 0.2,
+        0.15 + t * 1.1);
     }
 
     // 3 FUNNEL — lead-gen: spiral rain tightening into a hairline stream
@@ -288,38 +287,31 @@ function bakeFormations(count: number, texW: number, rows: number) {
 
     // 5 ORBIT — sales: elliptic orbits tightening, captured inner ring
     {
-      const ringPick = Math.random();
-      let rr: number, wv: number, ecc: number;
-      if (ringPick < 0.4) { rr = 0.9 + gauss() * 0.015; wv = 1.05; ecc = 1.0; }
-      else if (ringPick < 0.7) { rr = 1.7 + gauss() * 0.02; wv = 0.55; ecc = 1.25; }
-      else { rr = 2.6 + gauss() * 0.03; wv = 0.3; ecc = 1.45; }
-      const a = Math.random() * TAU;
-      set(5, i, Math.cos(a) * rr * ecc, Math.sin(a) * rr * 0.8, gauss() * 0.04 - 0.25, wv);
+      // capture: prospects pulled into a tight bright column, strays still inbound (no rings)
+      if (r01 < 0.55) {
+        const t = Math.random();
+        set(5, i, gauss() * 0.22, (t - 0.5) * 4.6, gauss() * 0.2 - 0.25, 0.8 + t * 0.5);
+      } else {
+        const side = Math.random() < 0.5 ? -1 : 1;
+        const d = 0.6 + Math.pow(Math.random(), 1.5) * 3.4;
+        set(5, i, side * d, gauss() * 2.4, gauss() * 0.3 - 0.25, 0.5 - d * 0.09);
+      }
     }
 
     // 6 CORE — backend: the gyroscope. Bright nucleus + 3 orthogonal hairline
     // rings on different planes (council-gated: precision machine, zero
     // organic read; spokes dropped — their wedges echoed the flower).
     {
-      if (r01 < 0.3) {
-        const a = Math.random() * TAU;
-        const ph = Math.acos(2 * Math.random() - 1);
-        const rr = 0.5 + gauss() * 0.03;
-        set(6, i, rr * Math.sin(ph) * Math.cos(a), rr * Math.sin(ph) * Math.sin(a) * 0.9, rr * Math.cos(ph) - 0.2, 1.3 + Math.random() * 0.4);
-      } else if (r01 < 0.78) {
-        const ring = Math.floor(Math.random() * 3);
-        const R = [1.35, 1.7, 2.05][ring];
-        const a = Math.random() * TAU;
-        const c = Math.cos(a) * R, s = Math.sin(a) * R;
-        const j = () => gauss() * 0.015;
-        let x: number, y: number, z: number;
-        if (ring === 0) { x = c; y = s * 0.82; z = 0; }
-        else if (ring === 1) { x = c; y = 0; z = s; }
-        else { x = 0; y = c * 0.82; z = s; }
-        set(6, i, x + j(), y + j(), z + j() - 0.2, 0.9 + (ring === 0 ? 0.25 : 0));
+      // the running engine: dense rectangular lattice slab + hot core seam (zero circular geometry)
+      if (r01 < 0.72) {
+        const gx = Math.floor(Math.random() * 26), gy = Math.floor(Math.random() * 14), gz = Math.floor(Math.random() * 3);
+        const x = (gx / 25 - 0.5) * 4.4 + gauss() * 0.02;
+        const y = (gy / 13 - 0.5) * 2.6 + gauss() * 0.02;
+        const z = (gz - 1) * 0.5 + gauss() * 0.02 - 0.2;
+        const seam = Math.abs(gy / 13 - 0.5) < 0.09 ? 0.7 : 0;
+        set(6, i, x, y, z, 0.55 + seam + Math.random() * 0.25);
       } else {
-        const a = Math.random() * TAU; const rr = 2.3 + Math.pow(Math.random(), 2) * 1.5;
-        set(6, i, Math.cos(a) * rr, Math.sin(a) * rr * 0.72, gauss() * 0.4 - 0.3, 0.1 + Math.random() * 0.12);
+        set(6, i, gauss() * 3.4, gauss() * 2.0, gauss() * 0.5 - 0.3, 0.1 + Math.random() * 0.12);
       }
     }
 

@@ -180,7 +180,7 @@ export default function Landing() {
               const v = Math.round(proxy.v);
               if (v === last) return;
               last = v;
-              c.textContent = `${v}${suffix}`;
+              c.textContent = `${v.toLocaleString()}${suffix}`;
             },
           });
         });
@@ -200,6 +200,17 @@ export default function Landing() {
         };
         glowGrid.addEventListener("pointermove", onGlow, { passive: true });
         glowCleanup = () => glowGrid.removeEventListener("pointermove", onGlow);
+      }
+
+      // scroll progress hairline (orientation for a long cinematic scroll)
+      const prog = root.current?.querySelector<HTMLElement>(".scroll-progress");
+      if (prog) {
+        ScrollTrigger.create({
+          trigger: document.documentElement,
+          start: 0,
+          end: () => document.documentElement.scrollHeight - window.innerHeight,
+          onUpdate: (self) => { prog.style.transform = `scaleX(${self.progress})`; },
+        });
       }
 
       // CTA molten pulse
@@ -234,6 +245,10 @@ export default function Landing() {
       <div aria-hidden className="pointer-events-none fixed inset-0 z-[1]"
         style={{ background: "radial-gradient(130% 130% at 50% 50%, transparent 58%, rgba(0,0,0,0.42) 100%)" }} />
 
+      {/* scroll progress hairline */}
+      <div aria-hidden className="scroll-progress fixed inset-x-0 top-0 z-[60] h-[2px] origin-left"
+        style={{ backgroundColor: ACCENT, transform: "scaleX(0)" }} />
+
       {/* NAV */}
       <nav className="fixed inset-x-0 top-0 z-50 border-b border-[#161619] bg-[#0B0B0C]/70 backdrop-blur-md">
         <div className="mx-auto flex max-w-[1180px] items-center justify-between px-5 py-4 md:px-8">
@@ -254,7 +269,7 @@ export default function Landing() {
                 The revenue engine<br />your business is<br /><span className="ignite">missing.</span>
               </h1>
               <div data-hero className="mt-5 font-mono text-[12px] uppercase tracking-[0.22em]" style={{ color: ACCENT }}>
-                AI-run · Operator-deep · One client at a time
+                AI-run · Operator-deep · Revenue-first
               </div>
               <p data-hero className="mt-7 max-w-[42ch] text-[18px] leading-[1.7] text-[#C9C7BF] md:text-[20px]">
                 PropelBD installs the AI-powered business-development engine for UAE companies
@@ -267,7 +282,7 @@ export default function Landing() {
                 </a>
               </div>
               <p data-hero className="mt-9 border-t border-[#1C1C1F] pt-5 font-mono text-[12px] uppercase leading-[2] tracking-[0.14em] text-[#A5A39B]">
-                <span className="text-[#ECEAE3]">321</span> decision-makers mapped · <span className="text-[#ECEAE3]">16</span> corporate targets live · <span className="text-[#ECEAE3]">1st</span> deal closed — for our anchor client SupperClub
+                <span className="text-[#ECEAE3]">10,000+</span> leads generated for clients · <span className="text-[#ECEAE3]">6+</span> deals closed across engagements · <span className="text-[#ECEAE3]">verified</span> pipeline, not scraped
               </p>
             </div>
           </div>
@@ -329,7 +344,7 @@ export default function Landing() {
                         <div className="font-mono text-[13px]" style={{ color: ACCENT }}>{String(i + 1).padStart(2, "0")} / 05</div>
                         <h3 className="mt-3 font-display text-3xl font-semibold tracking-tight md:text-4xl">{t}</h3>
                         <p className="mt-4 max-w-[38ch] text-[17px] leading-[1.7] text-[#C9C7BF]">{d}</p>
-                        <p className="mt-3 max-w-[38ch] font-mono text-[12px] uppercase tracking-[0.14em] text-[#A5A39B]">{sub}</p>
+                        <p className="mt-3 max-w-[42ch] text-[14px] italic leading-[1.6] text-[#A5A39B]">{sub}</p>
                       </div>
                     ))}
                   </div>
@@ -350,16 +365,16 @@ export default function Landing() {
                 The engine, installed. <span style={{ color: ACCENT }}>You keep the map</span> either way.
               </h2>
               <p data-reveal className="mt-5 max-w-[56ch] text-[16px] leading-[1.7] text-[#AEACA3]">
-                Built once already: 321 decision-makers mapped and a first corporate deal
-                closed for SupperClub.
+                Built once already: 10,000+ leads generated for clients and 6+ deals
+                closed across our engagements.
               </p>
               <div className="mt-10 space-y-5">
                 {[
-                  ["Revenue teardown first", "We map where your pipeline leaks before you commit a dirham. The map is yours to keep, buy or not."],
+                  ["Revenue teardown first", "We map where your pipeline leaks. The map is yours to keep."],
                   ["ICP and verified buyer list", "Decision-makers mapped and verified. Not scraped spam."],
                   ["Outbound engine, live", "Sequences in your voice, tracking, reporting. Built, then running under our hand."],
                   ["Qualified meetings on your calendar", "Revenue is the only scoreboard we report against."],
-                  ["Founder-built, founder-run", "One client at a time. No junior handoff, no account-manager theater."],
+                  ["Senior operators, end to end", "The team that scopes your engine is the team that runs it."],
                 ].map(([t, d], i) => (
                   <div key={i} data-reveal className="grid grid-cols-[auto_1fr] items-baseline gap-x-4 border-b border-[#1C1C1F] pb-5">
                     <span className="font-mono text-[13px]" style={{ color: ACCENT }}>{String(i + 1).padStart(2, "0")}</span>
@@ -386,7 +401,7 @@ export default function Landing() {
                 <a href="#contact" className="inline-flex items-center gap-2 px-6 py-3.5 font-mono text-[13px] uppercase tracking-[0.14em] text-[#0B0B0C] transition-transform duration-200 hover:-translate-y-0.5 cursor-pointer" style={{ backgroundColor: ACCENT }}>
                   Book the free revenue teardown →
                 </a>
-                <span className="font-mono text-[12px] uppercase tracking-[0.18em] text-[#A5A39B]">Founder-run · one client at a time</span>
+                <span className="font-mono text-[12px] uppercase tracking-[0.18em] text-[#A5A39B]">Built once · runs for good</span>
               </div>
             </div>
           </div>
@@ -449,14 +464,14 @@ export default function Landing() {
 
             <div data-repel className="scrim mt-12 max-w-[46rem]">
               <p data-reveal className="max-w-[56ch] text-[17px] leading-[1.7] text-[#C9C7BF]">
-                For SupperClub — the anchor client — we stood up the outbound engine, the
-                targeting, and the corporate-membership pipeline. The meetings started landing.
+                First for our anchor client SupperClub, now across every engagement — we stand up
+                the outbound engine, the targeting, and the corporate-membership pipeline. The meetings land.
               </p>
               <div data-reveal className="glow-grid mt-8 grid gap-px overflow-hidden border border-[#26262A] bg-[#26262A] sm:grid-cols-3">
                 {[
+                  ["10000", "+", "verified leads generated for clients"],
+                  ["6", "+", "deals closed across engagements"],
                   ["16", "", "corporate targets in live pipeline"],
-                  ["1", "st", "corporate membership deal closed"],
-                  ["321", "", "verified decision-makers surfaced"],
                 ].map(([n, suffix, d]) => (
                   <div key={d} className="glow-cell bg-[#0B0B0C]/80 p-6">
                     <div data-count={n} data-suffix={suffix} className="font-display text-3xl font-bold tracking-tight md:text-4xl" style={{ color: ACCENT }}>{n}{suffix}</div>
@@ -465,7 +480,7 @@ export default function Landing() {
                 ))}
               </div>
               <p data-reveal className="mt-5 font-mono text-[12px] uppercase tracking-[0.18em] text-[#A5A39B]">
-                Every particle behind this section is one of the 321
+                Every particle behind this section is a decision-maker we have mapped
               </p>
             </div>
           </div>
@@ -497,7 +512,7 @@ export default function Landing() {
               <Label>FAQ</Label>
               <div className="mt-8 space-y-1">
                 {[
-                  ["Why not just hire a BD person?", "A senior BD hire in the UAE runs well past our retainer once you add ramp time, tooling, and management. The engine arrives built, with the founder running it — and if it does not fit, you stop. No severance, no rehiring cycle."],
+                  ["Why not just hire a BD person?", "A senior BD hire in the UAE runs well past our retainer once you add ramp time, tooling, and management. The engine arrives built and run for you — and if it does not fit, you stop. No severance, no rehiring cycle."],
                   ["How fast do we see something real?", "The revenue teardown lands before any commitment. Once we start, the first verified buyer lists and live outreach move in weeks, not quarters — you watch the pipeline fill in the same tracker we work from."],
                   ["What do you need from us?", "One decision-maker, roughly an hour a week, and honest answers about who your best customers are. We handle the rest — lists, sequences, tooling, follow-up discipline."],
                   ["Are we locked in?", "No long lock-in. The work compounds, so clients stay because it works — and everything built for you, the lists, the sequences, the map, stays yours."],
@@ -527,12 +542,11 @@ export default function Landing() {
                 A 20-minute call: we map where your revenue is leaking and what we’d
                 build first. You keep the map. No deck. No pitch theater.
               </p>
-              <a data-reveal data-cta-heat href="mailto:alishaheen@supperclubme.com?subject=PropelBD%20%E2%80%94%20Revenue%20teardown" className="mt-10 inline-flex items-center gap-2 px-8 py-4 font-mono text-[13px] uppercase tracking-[0.14em] text-[#0B0B0C] transition-transform duration-200 hover:-translate-y-0.5 cursor-pointer" style={{ backgroundColor: ACCENT }}>
+              <a data-reveal data-cta-heat href="mailto:a.shaheen7853@gmail.com?subject=PropelBD%20%E2%80%94%20Revenue%20teardown" className="mt-10 inline-flex items-center gap-2 px-8 py-4 font-mono text-[13px] uppercase tracking-[0.14em] text-[#0B0B0C] transition-transform duration-200 hover:-translate-y-0.5 cursor-pointer" style={{ backgroundColor: ACCENT }}>
                 Book a free revenue teardown →
               </a>
               <p data-reveal className="mt-8 text-[15px] leading-[1.65] text-[#AEACA3]">
-                You work directly with the founder — the person who builds the engine,
-                runs it, and answers for it.
+                The people who build your engine run your engine — and answer for it.
               </p>
               <p data-reveal className="mt-3 font-mono text-[12px] uppercase tracking-[0.18em] text-[#77756D]">
                 Replies within one business day
@@ -546,6 +560,7 @@ export default function Landing() {
         <div className="mx-auto flex max-w-[1180px] flex-col gap-4 px-5 py-10 md:flex-row md:items-center md:justify-between md:px-8">
           <div className="font-display text-base font-bold">Propel<span style={{ color: ACCENT }}>BD</span></div>
           <div className="font-display text-[15px] italic text-[#A5A39B]">Your business, rebuilt to scale.</div>
+          <a href="mailto:a.shaheen7853@gmail.com" className="font-mono text-[11px] uppercase tracking-[0.18em] text-[#A5A39B] underline-offset-4 hover:text-[#ECEAE3] hover:underline">a.shaheen7853@gmail.com</a>
           <div className="font-mono text-[11px] uppercase tracking-[0.18em] text-[#A5A39B]">
             © 2026 PropelBD · Dubai · Abu Dhabi · <a href={`${BASE}/privacy`} className="underline-offset-4 hover:text-[#ECEAE3] hover:underline">Privacy</a>
           </div>
