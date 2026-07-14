@@ -1,5 +1,5 @@
 User-Agent: *
 Allow: /
 
-Host: https://propelbd.com
-Sitemap: https://propelbd.com/sitemap.xml
+Host: https://propelbd.ai
+Sitemap: https://propelbd.ai/sitemap.xml
