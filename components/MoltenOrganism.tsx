@@ -239,7 +239,6 @@ function bakeFormations(count: number, texW: number, rows: number) {
     data[o] = x; data[o + 1] = y; data[o + 2] = z; data[o + 3] = w;
   };
 
-  const TAU = Math.PI * 2;
 
   for (let i = 0; i < count; i++) {
     const r01 = Math.random();
@@ -252,36 +251,38 @@ function bakeFormations(count: number, texW: number, rows: number) {
     set(1, i, gauss() * 6.4, gauss() * 4.0, gauss() * 3.2 - 0.6,
       Math.random() < 0.68 ? -(0.15 + Math.random() * 0.2) : 0.2 + Math.random() * 0.25);
 
-    // 2 TARGETING — no geometry (Ali: 'globe with a ring' read as a shape — kill it).
-    // A directional convergence: wide drift condensing toward one bright focal point.
+    // 2 TARGETING — directional convergence, NOT a disc. Wide drift on the left
+    // condensing rightward into one bright focal point. (The old cos/sin version
+    // still baked an ellipse despite the comment — this actually kills the shape.)
     {
-      const t = Math.pow(Math.random(), 1.7);           // density gradient toward focus
-      const a = Math.random() * TAU;
-      const rr = 0.15 + (1 - t) * 4.6;
-      const jitter = () => gauss() * (0.25 + (1 - t) * 0.6);
-      set(2, i, Math.cos(a) * rr + jitter(), Math.sin(a) * rr * 0.75 + jitter(), gauss() * 0.4 - 0.2,
-        0.15 + t * 1.1);
+      const t = Math.pow(Math.random(), 1.7);           // 0 far drift → 1 at focus
+      const x = -3.4 * (1 - t) + gauss() * (0.3 + (1 - t) * 0.7);
+      const y = gauss() * (0.35 + (1 - t) * 1.9);       // tall spread far, tight at focus
+      set(2, i, x, y, gauss() * 0.4 - 0.2, 0.15 + t * 1.1);
     }
 
-    // 3 FUNNEL — lead-gen: spiral rain tightening into a hairline stream
+    // 3 FUNNEL — lead-gen: wide top rain condensing into a hairline stream.
+    // LINEAR taper (no cos/sin, no spiral) — the radial version read as a circle.
+    // x-spread shrinks with fall depth so many drops narrow into one bright thread.
     {
-      const t = Math.random();
+      const t = Math.random();                       // 0 top → 1 bottom
       const y = 2.6 - t * 5.0;
-      const shrink = Math.pow(1 - t, 1.6);
-      const a = Math.random() * TAU + t * 9.0;
-      const rr = (0.1 + shrink * 2.7) * (0.92 + Math.random() * 0.16);
-      set(3, i, Math.cos(a) * rr, y, Math.sin(a) * rr - 0.3, 0.18 + t * 0.85);
+      const spread = (1 - Math.pow(t, 0.7)) * 2.6 + 0.04;  // wide up top, hairline at base
+      const x = (Math.random() - 0.5) * 2 * spread;
+      set(3, i, x, y, gauss() * 0.22 - 0.3, 0.18 + t * 0.85);
     }
 
-    // 4 ARCS — outreach: emission arcs firing out, some returning brighter
+    // 4 ARCS — outreach: horizontal message beams firing RIGHTWARD, a third
+    // returning hotter (replies). DIRECTIONAL lanes (no radial base angle) —
+    // the 9-arc version read as a flower. Banded y-lanes = separate threads.
     {
-      const arc = Math.floor(Math.random() * 9);
-      const ret = arc % 3 === 0;               // a third of the arcs are replies
-      const t = Math.random();
-      const base = (arc / 9) * TAU;
-      const reach = 0.4 + Math.sin(t * Math.PI) * (2.4 + (arc % 4) * 0.35);
-      const a = base + t * 0.9;
-      set(4, i, Math.cos(a) * reach, Math.sin(a) * reach * 0.72, gauss() * 0.08 - 0.3,
+      const lane = Math.floor(Math.random() * 9);
+      const ret = lane % 3 === 0;                    // a third are replies
+      const t = Math.random();                       // 0 origin → 1 far reach
+      const laneY = (lane / 8 - 0.5) * 3.2 + gauss() * 0.12;
+      const x = -0.6 + t * (2.6 + (lane % 4) * 0.3);
+      const droop = -Math.sin(t * Math.PI) * 0.35;   // subtle ballistic sag, not an orbit
+      set(4, i, x, laneY + droop, gauss() * 0.1 - 0.3,
         (ret ? 1.15 : 0.4) * (0.5 + t * 0.7));
     }
 
@@ -331,19 +332,26 @@ function bakeFormations(count: number, texW: number, rows: number) {
         const col = i % 24, row = Math.floor(i / 24);
         set(8, i, (col - 11.5) * 0.34 + gauss() * 0.015, (row - 6.5) * 0.42 + gauss() * 0.015, 0.4, 3.0);
       } else {
-        const a = Math.random() * TAU; const rr = 3.2 + Math.pow(Math.random(), 1.5) * 3.4;
-        set(8, i, Math.cos(a) * rr, Math.sin(a) * rr * 0.7, gauss() * 1.4 - 1.2, 0.05 + Math.random() * 0.06);
+        // ambient scatter — rectangular field, not a disc halo around the grid
+        set(8, i, (Math.random() - 0.5) * 12.0, (Math.random() - 0.5) * 8.0,
+          gauss() * 1.4 - 1.2, 0.05 + Math.random() * 0.06);
       }
     }
 
-    // 9 VORTEX — molten ring around the close (never crossing center)
+    // 9 CLOSE — the deal closes: a bright vertical molten seam (the site's spine
+    // continued) with strays converging into it. NO ring/torus — the vortex
+    // version was a literal circle, the #1 shape Ali flagged.
     {
-      const a = Math.random() * TAU;
-      const R = 2.7, tube = 0.13 + Math.pow(Math.random(), 2) * 0.3;
-      const b = Math.random() * TAU;
-      const rr = R + Math.cos(b) * tube;
-      set(9, i, Math.cos(a) * rr, Math.sin(a) * rr * 0.62, Math.sin(b) * tube - 0.2,
-        r01 < 0.75 ? 0.9 + Math.random() * 0.6 : 0.3);
+      if (r01 < 0.72) {
+        const y = (Math.random() - 0.5) * 6.2;
+        const thick = gauss() * (0.16 + Math.pow(Math.random(), 2) * 0.22);
+        set(9, i, 0.8 + thick, y, gauss() * 0.28 - 0.2, 0.9 + Math.random() * 0.6);
+      } else {
+        // strays still inbound from the left, being pulled to the seam
+        const t = Math.random();
+        set(9, i, 0.8 - (1 - t) * 3.6 + gauss() * 0.3, gauss() * 2.8,
+          gauss() * 0.4 - 0.2, 0.3 + t * 0.35);
+      }
     }
   }
   return data;
