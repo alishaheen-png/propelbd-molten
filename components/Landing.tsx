@@ -365,8 +365,8 @@ export default function Landing() {
                 The engine, installed. <span style={{ color: ACCENT }}>You keep the map</span> either way.
               </h2>
               <p data-reveal className="mt-5 max-w-[56ch] text-[16px] leading-[1.7] text-[#AEACA3]">
-                Built once already: 10,000+ leads generated for clients and 6+ deals
-                closed across our engagements.
+                Built, deployed, tested and proven: 10,000+ leads generated for clients
+                and 6+ deals closed across our engagements.
               </p>
               <div className="mt-10 space-y-5">
                 {[
