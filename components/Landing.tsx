@@ -96,13 +96,74 @@ export default function Landing() {
         };
         Array.from(h1.childNodes).forEach(splitNode);
       }
-      const nav = gsap.timeline({ delay: 0.25 });
+      // preloader — forge ignition. First visit only per tab; repeat visits go
+      // straight to the hero (no ritual on every reload).
+      const pl = root.current?.querySelector<HTMLElement>(".preloader");
+      const seen = sessionStorage.getItem("pbd-pl") === "1";
+      let heroDelay = 0.25;
+      if (pl && !seen) {
+        sessionStorage.setItem("pbd-pl", "1");
+        heroDelay = 1.5;
+        const bar = pl.querySelector<HTMLElement>(".preloader-bar");
+        const word = Array.from(pl.querySelectorAll<HTMLElement>(".preloader-char"));
+        const tl = gsap.timeline();
+        tl.set(pl, { display: "flex" })
+          .from(word, { opacity: 0, y: 14, duration: 0.4, stagger: 0.045, ease: "power2.out" })
+          .to(bar, { scaleX: 1, duration: 0.7, ease: "power2.inOut" }, 0.1)
+          .to(word, { color: ACCENT, textShadow: "0 0 32px rgba(255,90,31,0.5)", duration: 0.35, stagger: 0.03 }, "-=0.35")
+          .to(pl, { clipPath: "inset(0 0 100% 0)", duration: 0.6, ease: "power3.inOut" }, "+=0.08")
+          .set(pl, { display: "none" });
+      } else if (pl) {
+        gsap.set(pl, { display: "none" });
+      }
+
+      const nav = gsap.timeline({ delay: heroDelay });
       nav.from("[data-hero]:not(h1)", { opacity: 0, y: 26, duration: 0.9, stagger: 0.09, ease: "power3.out" });
       nav.from(".forge-char", {
         opacity: 0, y: 30, filter: "blur(6px)", duration: 0.7,
         stagger: { each: 0.016, from: "start" }, ease: "power3.out",
       }, 0.1);
       nav.to(".ignite .forge-char", { color: ACCENT, textShadow: "0 0 46px rgba(255,90,31,0.55), 0 0 12px rgba(255,90,31,0.7)", duration: 0.9, stagger: 0.04, ease: "power2.out" }, "-=0.5");
+      nav.add(() => { document.querySelector(".ignite")?.classList.add("ignited"); });
+
+      // magnetic CTAs — the button leans toward the hand, springs home on leave
+      const magnets = Array.from(root.current?.querySelectorAll<HTMLElement>("[data-magnetic]") || []);
+      const magCleanups: (() => void)[] = [];
+      if (!window.matchMedia("(pointer: coarse)").matches) {
+        magnets.forEach((m) => {
+          const qx = gsap.quickTo(m, "x", { duration: 0.35, ease: "power3.out" });
+          const qy = gsap.quickTo(m, "y", { duration: 0.35, ease: "power3.out" });
+          const onEnterMove = (e: PointerEvent) => {
+            const r = m.getBoundingClientRect();
+            qx(((e.clientX - (r.left + r.width / 2)) / r.width) * 14);
+            qy(((e.clientY - (r.top + r.height / 2)) / r.height) * 10);
+          };
+          const onLeave = () => { qx(0); qy(0); };
+          m.addEventListener("pointermove", onEnterMove, { passive: true });
+          m.addEventListener("pointerleave", onLeave, { passive: true });
+          magCleanups.push(() => { m.removeEventListener("pointermove", onEnterMove); m.removeEventListener("pointerleave", onLeave); });
+        });
+      }
+
+      // marquee reacts to scroll velocity — the credential band skews with the
+      // reader's momentum and settles when they settle
+      const track = root.current?.querySelector<HTMLElement>(".marquee-track");
+      if (track) {
+        const skewTo = gsap.quickTo(track, "skewX", { duration: 0.45, ease: "power2.out" });
+        const onVel = () => skewTo(gsap.utils.clamp(-6, 6, lenis.velocity * -0.35));
+        lenis.on("scroll", onVel);
+      }
+
+      // cursor ember — a faint warm spot trailing the hand over the whole page
+      const emberCur = root.current?.querySelector<HTMLElement>(".cursor-ember");
+      if (emberCur && !window.matchMedia("(pointer: coarse)").matches) {
+        const cx = gsap.quickTo(emberCur, "x", { duration: 0.6, ease: "power3.out" });
+        const cy = gsap.quickTo(emberCur, "y", { duration: 0.6, ease: "power3.out" });
+        const onCur = (e: PointerEvent) => { cx(e.clientX); cy(e.clientY); };
+        window.addEventListener("pointermove", onCur, { passive: true });
+        gsap.to(emberCur, { opacity: 1, duration: 1.2, delay: heroDelay + 0.5 });
+        magCleanups.push(() => window.removeEventListener("pointermove", onCur));
+      }
 
       // section reveals — emerge, don't appear; never reverse
       gsap.utils.toArray<HTMLElement>("[data-reveal]").forEach((el) => {
@@ -231,6 +292,7 @@ export default function Landing() {
 
       return () => {
         glowCleanup?.();
+        magCleanups.forEach((fn) => fn());
         gsap.ticker.remove(ticker);
         lenis.destroy();
       };
@@ -254,11 +316,26 @@ export default function Landing() {
       <div aria-hidden className="scroll-progress fixed inset-x-0 top-0 z-[60] h-[2px] origin-left"
         style={{ backgroundColor: ACCENT, transform: "scaleX(0)" }} />
 
+      {/* preloader — forge ignition ritual (first visit per tab; JS reveals it) */}
+      <div aria-hidden className="preloader fixed inset-0 z-[80] hidden flex-col items-center justify-center gap-6 bg-[#0B0B0C]">
+        <div className="font-display text-2xl font-bold tracking-[0.3em]">
+          {"PROPELBD".split("").map((c, i) => (
+            <span key={i} className="preloader-char inline-block">{c}</span>
+          ))}
+        </div>
+        <div className="h-px w-40 overflow-hidden bg-[#1C1C1F]">
+          <div className="preloader-bar h-full w-full origin-left scale-x-0" style={{ backgroundColor: ACCENT }} />
+        </div>
+      </div>
+
+      {/* cursor ember — faint warm trail on fine pointers (JS drives, CSS hides on coarse) */}
+      <div aria-hidden className="cursor-ember pointer-events-none fixed left-0 top-0 z-[2] opacity-0" />
+
       {/* NAV */}
       <nav className="fixed inset-x-0 top-0 z-50 border-b border-[#161619] bg-[#0B0B0C]/70 backdrop-blur-md">
         <div className="mx-auto flex max-w-[1180px] items-center justify-between px-5 py-4 md:px-8">
           <a href="#top" className="font-display text-lg font-bold tracking-tight">Propel<span style={{ color: ACCENT }}>BD</span></a>
-          <a href="#contact" className="group inline-flex min-h-[44px] items-center gap-2 border border-[#2A2A2E] px-4 py-2.5 font-mono text-[12px] uppercase tracking-[0.16em] transition-colors duration-200 hover:border-[#FF5A1F] cursor-pointer">
+          <a href="#contact" data-magnetic className="group inline-flex min-h-[44px] items-center gap-2 border border-[#2A2A2E] px-4 py-2.5 font-mono text-[12px] uppercase tracking-[0.16em] transition-colors duration-200 hover:border-[#FF5A1F] cursor-pointer">
             Book a deep dive session <span className="transition-transform group-hover:translate-x-0.5" style={{ color: ACCENT }}>→</span>
           </a>
         </div>
@@ -282,7 +359,7 @@ export default function Landing() {
                 prove it works, then it runs.
               </p>
               <div data-hero className="mt-10 flex flex-wrap items-center gap-4">
-                <a href="#contact" className="inline-flex items-center gap-2 px-6 py-3.5 font-mono text-[13px] uppercase tracking-[0.14em] text-[#0B0B0C] transition-transform duration-200 hover:-translate-y-0.5 cursor-pointer" style={{ backgroundColor: ACCENT }}>
+                <a href="#contact" data-magnetic className="inline-flex items-center gap-2 px-6 py-3.5 font-mono text-[13px] uppercase tracking-[0.14em] text-[#0B0B0C] transition-transform duration-200 hover:-translate-y-0.5 cursor-pointer" style={{ backgroundColor: ACCENT }}>
                   Book a deep dive session →
                 </a>
               </div>
@@ -403,7 +480,7 @@ export default function Landing() {
                 </p>
               )}
               <div data-reveal className="mt-9 flex flex-wrap items-center gap-5">
-                <a href="#contact" className="inline-flex items-center gap-2 px-6 py-3.5 font-mono text-[13px] uppercase tracking-[0.14em] text-[#0B0B0C] transition-transform duration-200 hover:-translate-y-0.5 cursor-pointer" style={{ backgroundColor: ACCENT }}>
+                <a href="#contact" data-magnetic className="inline-flex items-center gap-2 px-6 py-3.5 font-mono text-[13px] uppercase tracking-[0.14em] text-[#0B0B0C] transition-transform duration-200 hover:-translate-y-0.5 cursor-pointer" style={{ backgroundColor: ACCENT }}>
                   Book a deep dive session →
                 </a>
                 <span className="font-mono text-[12px] uppercase tracking-[0.18em] text-[#A5A39B]">Built once · runs for good</span>
@@ -550,7 +627,7 @@ export default function Landing() {
                 A 20-minute call: we map where your revenue is leaking and what we’d
                 build first. You keep the map. No deck. No pitch theater.
               </p>
-              <a data-reveal data-cta-heat href="mailto:a.shaheen7853@gmail.com?subject=PropelBD%20%E2%80%94%20Deep%20dive%20session" className="mt-10 inline-flex items-center gap-2 px-8 py-4 font-mono text-[13px] uppercase tracking-[0.14em] text-[#0B0B0C] transition-transform duration-200 hover:-translate-y-0.5 cursor-pointer" style={{ backgroundColor: ACCENT }}>
+              <a data-reveal data-cta-heat data-magnetic href="mailto:a.shaheen7853@gmail.com?subject=PropelBD%20%E2%80%94%20Deep%20dive%20session" className="mt-10 inline-flex items-center gap-2 px-8 py-4 font-mono text-[13px] uppercase tracking-[0.14em] text-[#0B0B0C] transition-transform duration-200 hover:-translate-y-0.5 cursor-pointer" style={{ backgroundColor: ACCENT }}>
                 Book a deep dive session →
               </a>
               <p data-reveal className="mt-8 text-[15px] leading-[1.65] text-[#AEACA3]">

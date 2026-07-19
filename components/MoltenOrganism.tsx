@@ -200,6 +200,8 @@ const FIELD_FRAG = /* glsl */ `
   uniform float uTime;
   uniform float uPhase;
   uniform vec2  uRes;
+  uniform vec2  uMouseUV;
+  uniform float uHeat;
 
   float hash21(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
   float vnoise(vec2 p) {
@@ -210,22 +212,44 @@ const FIELD_FRAG = /* glsl */ `
   }
   float fbm(vec2 p) {
     float v = 0.0; float a = 0.5;
-    for (int i = 0; i < 3; i++) { v += a * vnoise(p); p = p * 2.03 + 17.0; a *= 0.5; }
+    for (int i = 0; i < 4; i++) { v += a * vnoise(p); p = p * 2.03 + 17.0; a *= 0.5; }
     return v;
   }
 
   void main() {
     vec2 uv = gl_FragCoord.xy / uRes;
-    vec2 p = uv * vec2(uRes.x / uRes.y, 1.0) * 2.2;
+    float asp = uRes.x / uRes.y;
+    vec2 p = uv * vec2(asp, 1.0) * 2.2;
     float t = uTime * 0.028;
-    vec2 w = vec2(fbm(p + t), fbm(p - t * 0.7));
-    float m = fbm(p + w * 1.8 + vec2(0.0, uPhase * 0.22));
+
+    // double domain-warp: the flow itself flows
+    vec2 w1 = vec2(fbm(p + t), fbm(p - t * 0.7));
+    vec2 w2 = vec2(fbm(p + w1 * 1.6 - t * 0.4), fbm(p + w1 * 1.6 + t * 0.55));
+    float m = fbm(p + w2 * 1.8 + vec2(0.0, uPhase * 0.22));
     float glow = smoothstep(0.48, 0.95, m);
+
+    // molten veins: ridged inversion of the warped field — thin drifting cracks.
+    // Windowed to ignition (hero) and close (CTA) so mid-story stays calm airspace.
+    float ridge = 1.0 - abs(2.0 * fbm(p * 1.35 + w2 * 2.1 - t * 0.5) - 1.0);
+    float veinWin = max(1.0 - smoothstep(0.4, 1.6, uPhase), smoothstep(7.9, 8.8, uPhase));
+    float vein = pow(smoothstep(0.86, 0.995, ridge), 3.0) * veinWin;
+
+    // cursor heat bloom: the field warms under the hand (uMouseUV parks at 99,99
+    // on coarse pointers so this term is zero on touch devices)
+    vec2 md = (uv - uMouseUV) * vec2(asp, 1.0);
+    float mheat = exp(-dot(md, md) * 18.0) * (0.5 + 0.5 * uHeat);
+
     // heat follows the story: dim through problem, warm at the engine, hot at the close
     float heat = 0.35 + 0.65 * smoothstep(2.0, 9.0, uPhase);
     vec3 ember = mix(vec3(0.045, 0.012, 0.005), vec3(0.30, 0.095, 0.028), glow) * heat;
+    ember += vec3(1.0, 0.36, 0.11) * vein * 0.16;
+    ember += vec3(0.42, 0.13, 0.04) * mheat * heat;
+
+    // shader-side animated grain: de-bands the deep gradient, reads as film
+    float g = (hash21(uv * uRes + fract(uTime) * 61.7) - 0.5) * 0.012;
+
     float vig = 1.0 - smoothstep(0.35, 1.3, length(uv - 0.5) * 2.0);
-    gl_FragColor = vec4(ember * vig, 1.0);
+    gl_FragColor = vec4(ember * vig + g, 1.0);
   }
 `;
 
@@ -471,6 +495,8 @@ export default function MoltenOrganism() {
       uTime: uniforms.uTime,
       uPhase: uniforms.uPhase,
       uRes: { value: new THREE.Vector2(window.innerWidth * dpr, window.innerHeight * dpr) },
+      uMouseUV: { value: new THREE.Vector2(99, 99) },  // offscreen until first pointer move
+      uHeat: uniforms.uCtaHeat,                        // CTA hover feeds the field bloom too
     };
     const fieldGeo = new THREE.BufferGeometry();
     fieldGeo.setAttribute("position", new THREE.BufferAttribute(new Float32Array([-1, -1, 0, 3, -1, 0, -1, 3, 0]), 3));
@@ -525,6 +551,7 @@ export default function MoltenOrganism() {
 
     /* ---- mouse ---- */
     const mouseTarget = new THREE.Vector2(99, 99);
+    const mouseUVTarget = new THREE.Vector2(99, 99);
     let lastX = 0, lastY = 0, vel = 0;
     const onMove = (e: PointerEvent) => {
       const nx = (e.clientX / window.innerWidth) * 2 - 1;
@@ -532,6 +559,7 @@ export default function MoltenOrganism() {
       const worldH = Math.tan((50 * Math.PI) / 360) * 7.2 * 2;
       const worldW = worldH * (window.innerWidth / window.innerHeight);
       mouseTarget.set((nx * worldW) / 2, (ny * worldH) / 2);
+      mouseUVTarget.set(e.clientX / window.innerWidth, 1 - e.clientY / window.innerHeight);
       vel = Math.min(1, vel + Math.hypot(e.clientX - lastX, e.clientY - lastY) * 0.0045);
       lastX = e.clientX; lastY = e.clientY;
     };
@@ -605,6 +633,7 @@ export default function MoltenOrganism() {
       lastScroll = sy;
 
       uniforms.uMouse.value.lerp(mouseTarget, 0.08);
+      fieldUniforms.uMouseUV.value.lerp(mouseUVTarget, 0.06);
       vel *= 0.94;
       uniforms.uMouseForce.value += (vel - uniforms.uMouseForce.value) * 0.1;
 

@@ -199,3 +199,31 @@ a[data-cta-heat]:hover { transform: translateY(-2px) scale(1.015); box-shadow: 0
 .vs-chip { flex-shrink: 0; font-family: var(--font-jetbrains), monospace; font-size: 10px; text-transform: uppercase; letter-spacing: .14em; padding: 3px 8px; border-radius: 2px; }
 .vs-them { color: #8B897F; border: 1px solid #26262A; }
 .vs-us { color: #0B0B0C; background: #FF5A1F; font-weight: 700; }
+
+/* ── cinematic layer (2026-07-19 layers-rebuild) ─────────────────────────── */
+
+/* cursor ember: faint warm spot trailing a fine pointer; pure decoration */
+.cursor-ember {
+  width: 340px; height: 340px; margin: -170px 0 0 -170px;
+  background: radial-gradient(circle, rgba(255,90,31,0.10) 0%, rgba(255,90,31,0.035) 38%, transparent 68%);
+  mix-blend-mode: screen; will-change: transform;
+}
+@media (pointer: coarse) { .cursor-ember { display: none; } }
+
+/* ignited hero word: after the ignite timeline lands, the metal keeps breathing */
+.ignite.ignited .forge-char { animation: ember-breathe 3.2s ease-in-out infinite; }
+.ignite.ignited .forge-char:nth-child(2n) { animation-delay: 0.6s; }
+.ignite.ignited .forge-char:nth-child(3n) { animation-delay: 1.3s; }
+@keyframes ember-breathe {
+  0%, 100% { text-shadow: 0 0 46px rgba(255,90,31,0.55), 0 0 12px rgba(255,90,31,0.7); }
+  50%      { text-shadow: 0 0 60px rgba(255,90,31,0.75), 0 0 18px rgba(255,90,31,0.85); }
+}
+
+/* preloader chars inherit display font; bar scales via GSAP */
+.preloader { clip-path: inset(0 0 0 0); }
+
+@media (prefers-reduced-motion: reduce) {
+  .cursor-ember { display: none; }
+  .preloader { display: none !important; }
+  .ignite.ignited .forge-char { animation: none; }
+}
