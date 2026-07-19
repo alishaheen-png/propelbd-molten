@@ -231,3 +231,13 @@ a[data-cta-heat]:hover { transform: translateY(-2px) scale(1.015); box-shadow: 0
 /* THE MACHINE (machine-rebuild branch) */
 .machine-navcta { transition: background-color .2s, color .2s; }
 .machine-navcta:hover { background-color: #0B0B0C; color: #F4F1EA; }
+
+/* Emil Kowalski easing tokens (animate skill) — trio v2 */
+:root {
+  --ease-out-quint: cubic-bezier(.23, 1, .32, 1);
+  --ease-in-out-cubic: cubic-bezier(.645, .045, .355, 1);
+  --ease-out-cubic: cubic-bezier(.33, 1, .68, 1);
+}
+.royal-seal-spin { animation: royal-spin 32s linear infinite; }
+@keyframes royal-spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .royal-seal-spin { animation: none; } }
