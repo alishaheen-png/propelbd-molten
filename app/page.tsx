@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
-import Landing from "@/components/Landing";
+import Landing from "@/components/MachineSite";
 
 export const metadata: Metadata = {
-  title: "PropelBD — The revenue engine your business is missing.",
+  title: "PropelBD — The Meeting Machine. Watch it run.",
   description:
     "PropelBD installs the AI-powered business-development engine for UAE companies behind on AI. Built, proven, then scaled. We sell results, not deliverables.",
   alternates: { canonical: "/" },
   openGraph: {
-    title: "PropelBD — The revenue engine your business is missing.",
+    title: "PropelBD — The Meeting Machine. Watch it run.",
     description:
       "AI-powered business development for UAE companies behind on AI. Built, proven, scaled.",
     type: "website",
@@ -15,7 +15,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "PropelBD — The revenue engine your business is missing.",
+    title: "PropelBD — The Meeting Machine. Watch it run.",
     description: "AI-powered business development for UAE companies behind on AI.",
   },
 };

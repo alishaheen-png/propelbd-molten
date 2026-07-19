@@ -227,3 +227,7 @@ a[data-cta-heat]:hover { transform: translateY(-2px) scale(1.015); box-shadow: 0
   .preloader { display: none !important; }
   .ignite.ignited .forge-char { animation: none; }
 }
+
+/* THE MACHINE (machine-rebuild branch) */
+.machine-navcta { transition: background-color .2s, color .2s; }
+.machine-navcta:hover { background-color: #0B0B0C; color: #F4F1EA; }
