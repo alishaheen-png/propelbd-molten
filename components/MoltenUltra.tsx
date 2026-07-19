@@ -270,7 +270,7 @@ export default function MoltenUltra() {
         {/* THE FINISHED BUILD — white chapter: clients under work-lights */}
         <section id="u-clients" className="relative py-36" style={{ backgroundColor: "#F5F1EA", color: "#141210", clipPath: "polygon(0 3vw, 100% 0, 100% calc(100% - 3vw), 0 100%)" }}>
           <div className="mx-auto w-full max-w-[1440px] px-5 py-10 md:px-10">
-            <p className="build" data-from="left"><span className={mono} style={{ color: "#B4430F" }}>The record — who we&apos;ve built for</span></p>
+            <p><span className={mono} style={{ color: "#B4430F" }}>The record — who we&apos;ve built for</span></p>
             <h2 className="build mt-4 font-display font-bold leading-[0.92] tracking-[-0.02em]" data-from="left" style={{ fontSize: "clamp(2.6rem, 8vw, 7rem)" }}>
               Built with them.
             </h2>
@@ -290,7 +290,7 @@ export default function MoltenUltra() {
                 </div>
               ))}
             </div>
-            <p className="build mt-12 max-w-[56ch] text-[17px] leading-[1.7] text-[#4A453E]" data-from="left">
+            <p className="mt-12 max-w-[56ch] text-[17px] leading-[1.7] text-[#4A453E]">
               First for our anchor client SupperClub, now across every engagement —
               we stand up the outbound engine, the targeting and the B2B pipeline.
               The meetings land.
@@ -328,7 +328,7 @@ export default function MoltenUltra() {
             <h2 className="build font-display font-bold leading-[0.9]" data-from="up" style={{ fontSize: "clamp(3rem, 10vw, 9rem)" }}>
               YOUR TURN<span style={{ color: EMBER }}>.</span>
             </h2>
-            <p className="build mx-auto mt-8 max-w-[46ch] text-[17px] leading-[1.7] text-[#C6C0B8]" data-from="up">
+            <p className="mx-auto mt-8 max-w-[46ch] text-[17px] leading-[1.7] text-[#C6C0B8]">
               A 20-minute deep dive: we map where your revenue is leaking and what
               we would build first. You keep the map. No deck. No pitch theater.
             </p>
@@ -337,7 +337,7 @@ export default function MoltenUltra() {
               data-from="up" style={{ backgroundColor: EMBER }}>
               Book the deep dive →
             </a>
-            <p className={`build ${mono} mt-8 text-[#8A847B]`} data-from="up">Replies within one business day</p>
+            <p className={`${mono} mt-8 text-[#8A847B]`}>Replies within one business day</p>
           </div>
         </section>
       </main>

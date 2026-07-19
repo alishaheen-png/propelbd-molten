@@ -195,7 +195,7 @@ export default function RoyalSite() {
       <div aria-hidden className="royal-seal pointer-events-none fixed z-[6] hidden items-center justify-center md:flex"
         style={{ left: "82%", top: "38%", width: 130, height: 130 }}>
         <div className="absolute inset-0 rounded-full border" style={{ borderColor: "rgba(196,181,253,0.4)" }} />
-        <div className="absolute inset-[10px] rounded-full border border-dashed royal-seal-spin" style={{ borderColor: "rgba(139,92,246,0.5)" }} />
+        <div className="absolute inset-[10px] rounded-full border border-dashed" style={{ borderColor: "rgba(139,92,246,0.5)" }} />
         <div className="absolute inset-[26px] rounded-full" style={{ background: "radial-gradient(circle, rgba(139,92,246,0.35), rgba(139,92,246,0.06))", boxShadow: "0 0 42px rgba(139,92,246,0.35)" }} />
         <span className="font-mono text-[9px] uppercase tracking-[0.3em]" style={{ color: LILAC }}>private</span>
       </div>
@@ -279,22 +279,20 @@ export default function RoyalSite() {
         {/* METHOD */}
         <section id="r-method" className="relative py-32">
           <div className="mx-auto w-full max-w-[1240px] px-6 md:px-10">
-            <div className="veil"><div className="veil-inner">
-              <p className={kicker} style={{ color: LILAC }}>The method</p>
-            </div></div>
+            <p className={kicker} style={{ color: LILAC }}>The method</p>
             <div className="mt-12 grid gap-10 md:grid-cols-3">
               {[["I — Map", "A deep dive on where your revenue leaks. ICP, geography, decision-makers. The map is yours to keep, engagement or not."],
                 ["II — Build", "Verified buyer lists and an outbound engine in your voice. No scraped spam; every contact a mapped decision-maker."],
                 ["III — Run", "We operate it. Meetings land on your calendar, reported against the only scoreboard that matters — revenue."]].map(([t, d], i) => (
-                <div key={i} className="veil"><div className="veil-inner border-t pt-7" style={{ borderColor: "rgba(196,181,253,0.2)" }}>
+                <div key={i} className="border-t pt-7" style={{ borderColor: "rgba(196,181,253,0.2)" }}>
                   <h3 className="font-display text-xl font-semibold md:text-2xl">{t}</h3>
                   <p className="mt-4 max-w-[38ch] text-[15px] leading-[1.8] text-[#A29CB8]">{d}</p>
-                </div></div>
+                </div>
               ))}
             </div>
-            <div className="veil mt-24"><p className="veil-inner mx-auto max-w-[30ch] text-center font-display text-2xl font-semibold leading-[1.35] md:text-4xl">
+            <p className="mx-auto mt-24 max-w-[30ch] text-center font-display text-2xl font-semibold leading-[1.35] md:text-4xl">
               Agencies report hours. <span style={{ color: LILAC }}>We report pipeline.</span>
-            </p></div>
+            </p>
           </div>
         </section>
 

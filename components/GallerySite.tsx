@@ -226,21 +226,21 @@ export default function GallerySite() {
         {/* PRACTICE */}
         <section className="relative py-32">
           <div className="mx-auto w-full max-w-[1360px] px-6 md:px-10">
-            <p data-g className={`hang ${label}`} style={{ color: COBALT }}>The practice</p>
-            <h2 className="hang mt-3 max-w-[20ch] text-3xl md:text-5xl" style={serif}>Three rooms, one discipline.</h2>
+            <p className={label} style={{ color: COBALT }}>The practice</p>
+            <h2 className="mt-3 max-w-[20ch] text-3xl md:text-5xl" style={serif}>Three rooms, one discipline.</h2>
             <div className="g-rule mt-4 h-[2px] w-40" style={{ backgroundColor: INKC }} />
             <div className="mt-14 grid gap-10 md:grid-cols-3">
               {[["Map", "A deep dive on where your revenue leaks — ICP, geography, decision-makers. The map is yours to keep, engagement or not."],
                 ["Build", "Verified buyer lists and an outbound engine in your voice. Every contact a mapped decision-maker, never scraped spam."],
                 ["Run", "We operate it. Meetings land on your calendar, reported against the only scoreboard that matters: revenue."]].map(([t, d], i) => (
-                <div key={i} className="hang border-l-2 pl-7" style={{ borderColor: i === 1 ? COBALT : "#D8D2C4" }}>
+                <div key={i} className="border-l-2 pl-7" style={{ borderColor: i === 1 ? COBALT : "#D8D2C4" }}>
                   <span className="font-mono text-[12px] tracking-[0.2em]" style={{ color: COBALT }}>{["I", "II", "III"][i]}</span>
                   <h3 className="mt-3 text-2xl md:text-3xl" style={serif}>{t}</h3>
                   <p className="mt-4 max-w-[36ch] text-[16px] leading-[1.8] text-[#524C42]">{d}</p>
                 </div>
               ))}
             </div>
-            <blockquote className="hang mx-auto mt-28 max-w-[26ch] text-center text-3xl leading-[1.3] md:text-4xl" style={serif}>
+            <blockquote className="mx-auto mt-28 max-w-[26ch] text-center text-3xl leading-[1.3] md:text-4xl" style={serif}>
               &ldquo;Agencies report hours. <span className="italic" style={{ color: COBALT }}>We report pipeline.</span>&rdquo;
             </blockquote>
           </div>
