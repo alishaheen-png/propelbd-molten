@@ -190,7 +190,12 @@ a[data-cta-heat]:hover { transform: translateY(-2px) scale(1.015); box-shadow: 0
 /* worked-at wordmark tiles in the credential band */
 .logo-word { font-family: var(--font-display-stack); font-size: 19px; font-weight: 600; letter-spacing: .04em; color: #B3B1A8; white-space: nowrap; opacity: .8; }
 
+/* animated / scanned numerals ride fixed-width figures so a live count-up ticks
+   in place instead of reflowing every frame (Cabinet Grotesk defaults to
+   proportional figures — the digit-jitter tell). tnum+lnum, degrades safely. */
+.tnum { font-variant-numeric: tabular-nums lining-nums; font-feature-settings: "tnum" 1, "lnum" 1; }
+
 /* why-us comparison chips: unmistakable them-vs-us labeling on every line */
 .vs-chip { flex-shrink: 0; font-family: var(--font-jetbrains), monospace; font-size: 10px; text-transform: uppercase; letter-spacing: .14em; padding: 3px 8px; border-radius: 2px; }
-.vs-them { color: #77756D; border: 1px solid #26262A; }
+.vs-them { color: #8B897F; border: 1px solid #26262A; }
 .vs-us { color: #0B0B0C; background: #FF5A1F; font-weight: 700; }

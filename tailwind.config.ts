@@ -8,39 +8,10 @@ const config: Config = {
   ],
   theme: {
     extend: {
-      colors: {
-        base: {
-          DEFAULT: "#0A1422",
-          deep: "#050C18",
-          door: "#061029",
-        },
-        surface: {
-          DEFAULT: "#0E1726",
-          elevated: "#162238",
-          soft: "#0E1829",
-          muted: "#142338",
-          door: "#0B1A3A",
-        },
-        accent: {
-          DEFAULT: "#2357C4",
-          hover: "#3A71E0",
-          bright: "#4A7FD9",
-          light: "#5E8BFF",
-        },
-        ink: {
-          DEFAULT: "#F4F6FA",
-          soft: "#F0F4FA",
-          door: "#F4F7FC",
-        },
-        muted: {
-          DEFAULT: "#6B7B8F",
-          soft: "#8DA3C1",
-          door: "#C7D4E8",
-        },
-        border: {
-          DEFAULT: "#1E324E",
-        },
-      },
+      // Palette is the ember/charcoal system defined in app/globals.css (hardcoded
+      // hex in the components). The old navy `colors` tokens were a dead leftover
+      // from a prior concept — zero usages — and were removed to stop them reading
+      // as the live palette.
       fontFamily: {
         display: ["var(--font-display)", "Cabinet Grotesk", "system-ui", "sans-serif"],
         body: ["var(--font-body)", "General Sans", "system-ui", "sans-serif"],

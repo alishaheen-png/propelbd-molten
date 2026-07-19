@@ -91,14 +91,18 @@ const VERT = /* glsl */ `
     float inSplit   = smoothstep(6.2, 7.0, uPhase) * (1.0 - smoothstep(7.0, 8.0, uPhase));
     float inVortex  = smoothstep(8.4, 9.0, uPhase);   // CTA now starts at 8.4 (FAQ owns 8.2-8.4)
 
-    // organic drift — violent in scatter + scroll turbulence, calm in formations
-    float amp = 0.06 + inDust * 0.10 + inScatter * 0.42 + uTurb * 0.5;
-    pos += drift(pos * 0.9 + aSeed * 6.2831, uTime * (0.16 + inScatter * 0.3 + uTurb * 0.4)) * amp;
+    // organic drift — violent in scatter + scroll turbulence, calm in formations.
+    // scatter amp raised + a second de-phased octave so between-slide states stay
+    // haphazard and never settle into an outline of the next block (Ali).
+    float amp = 0.08 + inDust * 0.14 + inScatter * 0.72 + uTurb * 0.55;
+    pos += drift(pos * 0.9 + aSeed * 6.2831, uTime * (0.16 + inScatter * 0.42 + uTurb * 0.4)) * amp;
+    pos += drift(pos * 1.7 + aSeed * 11.3, uTime * (0.31 + inScatter * 0.5)) * (inScatter * 0.34 + uTurb * 0.18);
 
-    // scatter: order almost forms, then bursts (slow gather, fast release)
-    float saw = fract(uTime * 0.11 + aSeed * 0.13);
-    float gather = smoothstep(0.0, 0.75, saw) * (1.0 - smoothstep(0.75, 1.0, saw));
-    pos *= 1.0 - 0.16 * gather * inScatter;
+    // scatter chaos: NO synchronized gather (that read as an order-forming shape).
+    // per-particle phase = pure entropy, tiny push only, never a clean contraction.
+    float saw = fract(uTime * 0.09 + hash(aSeed * 91.7) * 1.0);
+    float gather = smoothstep(0.0, 0.6, saw) * (1.0 - smoothstep(0.6, 1.0, saw));
+    pos += (hash(aSeed * 5.1) - 0.5) * gather * inScatter * 0.5;
 
     // split: ash sinks, the filament rises
     float dir = mix(1.0, -1.0, vAsh);
@@ -383,7 +387,7 @@ export default function MoltenOrganism() {
     gsap.registerPlugin(ScrollTrigger);
 
     const isCoarse = window.matchMedia("(pointer: coarse)").matches || window.innerWidth < 768;
-    const COUNT = isCoarse ? 20000 : 60000;
+    const COUNT = isCoarse ? 26000 : 82000;   // denser field (Ali: "feels like they're less")
     const TEXW = 512;
     const ROWS = Math.ceil(COUNT / TEXW);
     let dpr = Math.min(window.devicePixelRatio || 1, 1.5);

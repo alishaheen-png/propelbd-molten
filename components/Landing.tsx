@@ -32,9 +32,14 @@ const ENGINE_BEATS = [
   ["Backend", "The strategy and data that keeps it compounding.", "Every part nests into one running core."],
 ] as const;
 
+/* Section kicker. Deliberately NOT a numbered 01/02/03 cadence across the site
+   (that reads as AI scaffolding). Numbers survive only inside the Engine, which
+   is a genuine ordered sequence. Elsewhere: a short named marker with a leading
+   ember tick — a brand system, not a reflex. */
 function Label({ children }: { children: React.ReactNode }) {
   return (
-    <span className="font-mono text-[13px] uppercase tracking-[0.18em] text-[#AEACA3]">
+    <span className="inline-flex items-center gap-2.5 font-mono text-[13px] uppercase tracking-[0.18em] text-[#AEACA3]">
+      <span aria-hidden className="h-px w-6" style={{ backgroundColor: ACCENT }} />
       {children}
     </span>
   );
@@ -253,8 +258,8 @@ export default function Landing() {
       <nav className="fixed inset-x-0 top-0 z-50 border-b border-[#161619] bg-[#0B0B0C]/70 backdrop-blur-md">
         <div className="mx-auto flex max-w-[1180px] items-center justify-between px-5 py-4 md:px-8">
           <a href="#top" className="font-display text-lg font-bold tracking-tight">Propel<span style={{ color: ACCENT }}>BD</span></a>
-          <a href="#contact" className="group inline-flex items-center gap-2 border border-[#2A2A2E] px-4 py-2 font-mono text-[12px] uppercase tracking-[0.16em] transition-colors duration-200 hover:border-[#FF5A1F] cursor-pointer">
-            Book a teardown <span className="transition-transform group-hover:translate-x-0.5" style={{ color: ACCENT }}>→</span>
+          <a href="#contact" className="group inline-flex min-h-[44px] items-center gap-2 border border-[#2A2A2E] px-4 py-2.5 font-mono text-[12px] uppercase tracking-[0.16em] transition-colors duration-200 hover:border-[#FF5A1F] cursor-pointer">
+            Book a deep dive session <span className="transition-transform group-hover:translate-x-0.5" style={{ color: ACCENT }}>→</span>
           </a>
         </div>
       </nav>
@@ -278,7 +283,7 @@ export default function Landing() {
               </p>
               <div data-hero className="mt-10 flex flex-wrap items-center gap-4">
                 <a href="#contact" className="inline-flex items-center gap-2 px-6 py-3.5 font-mono text-[13px] uppercase tracking-[0.14em] text-[#0B0B0C] transition-transform duration-200 hover:-translate-y-0.5 cursor-pointer" style={{ backgroundColor: ACCENT }}>
-                  Book the free revenue teardown →
+                  Book a deep dive session →
                 </a>
               </div>
               <p data-hero className="mt-9 border-t border-[#1C1C1F] pt-5 font-mono text-[12px] uppercase leading-[2] tracking-[0.14em] text-[#A5A39B]">
@@ -286,7 +291,7 @@ export default function Landing() {
               </p>
             </div>
           </div>
-          <div aria-hidden className="pointer-events-none absolute bottom-5 left-1/2 -translate-x-1/2 font-mono text-[11px] uppercase tracking-[0.3em] text-[#5A584F]">
+          <div aria-hidden className="pointer-events-none absolute bottom-5 left-1/2 -translate-x-1/2 font-mono text-[11px] uppercase tracking-[0.3em] text-[#8B897F]">
             Scroll to forge
           </div>
         </section>
@@ -296,7 +301,7 @@ export default function Landing() {
           <div className="forge-sticky sticky top-0 flex h-screen items-center">
             <div className="mx-auto w-full max-w-[1180px] px-5 md:px-8">
               <div data-repel className="scrim max-w-[44rem] py-10">
-                <Label>01 — The problem</Label>
+                <Label>The problem</Label>
                 <h2 className="text-shadow-editorial mt-6 max-w-[18ch] font-display font-bold leading-[1.02] tracking-[-0.02em]" style={{ fontSize: "clamp(2rem, 5vw, 3.6rem)" }}>
                   Your pipeline runs on <span className="text-[#A5A39B]">referrals and luck.</span>
                 </h2>
@@ -327,7 +332,7 @@ export default function Landing() {
             <div className="mx-auto w-full max-w-[1180px] px-5 md:px-8">
               <div className="grid gap-10 md:grid-cols-[minmax(0,30rem)_1fr]">
                 <div data-repel className="scrim py-10">
-                  <Label>02 — The engine</Label>
+                  <Label>The engine</Label>
                   <h2 className="text-shadow-editorial mt-6 font-display font-bold leading-[1.02] tracking-[-0.02em]" style={{ fontSize: "clamp(2rem, 5vw, 3.4rem)" }}>
                     One system.<br /><span style={{ color: ACCENT }}>Five moving parts.</span>
                   </h2>
@@ -360,7 +365,7 @@ export default function Landing() {
         <section id="offer" data-forge="6:6.5" className="relative py-28 md:py-36">
           <div className="mx-auto w-full max-w-[1180px] px-5 md:px-8">
             <div data-repel className="scrim max-w-[46rem]">
-              <Label>03 — The offer</Label>
+              <Label>The offer</Label>
               <h2 data-reveal className="text-shadow-editorial mt-6 max-w-[20ch] font-display font-bold leading-[1.02] tracking-[-0.02em]" style={{ fontSize: "clamp(2rem, 5vw, 3.6rem)" }}>
                 The engine, installed. <span style={{ color: ACCENT }}>You keep the map</span> either way.
               </h2>
@@ -370,7 +375,7 @@ export default function Landing() {
               </p>
               <div className="mt-10 space-y-5">
                 {[
-                  ["Revenue teardown first", "We map where your pipeline leaks. The map is yours to keep."],
+                  ["Deep dive session first", "We map where your pipeline leaks. The map is yours to keep."],
                   ["ICP and verified buyer list", "Decision-makers mapped and verified. Not scraped spam."],
                   ["Outbound engine, live", "Sequences in your voice, tracking, reporting. Built, then running under our hand."],
                   ["Qualified meetings on your calendar", "Revenue is the only scoreboard we report against."],
@@ -394,12 +399,12 @@ export default function Landing() {
               {SHOW_PAY_PER_MEETING && (
                 <p data-reveal className="mt-4 max-w-[54ch] text-[16px] leading-[1.7] text-[#C9C7BF]">
                   Prefer pure performance? A pay-per-qualified-meeting option is available
-                  after the teardown.
+                  after the session.
                 </p>
               )}
               <div data-reveal className="mt-9 flex flex-wrap items-center gap-5">
                 <a href="#contact" className="inline-flex items-center gap-2 px-6 py-3.5 font-mono text-[13px] uppercase tracking-[0.14em] text-[#0B0B0C] transition-transform duration-200 hover:-translate-y-0.5 cursor-pointer" style={{ backgroundColor: ACCENT }}>
-                  Book the free revenue teardown →
+                  Book a deep dive session →
                 </a>
                 <span className="font-mono text-[12px] uppercase tracking-[0.18em] text-[#A5A39B]">Built once · runs for good</span>
               </div>
@@ -412,7 +417,7 @@ export default function Landing() {
           <div className="forge-sticky sticky top-0 flex h-screen items-center">
             <div className="mx-auto w-full max-w-[1180px] px-5 md:px-8">
               <div data-repel className="scrim py-10">
-                <Label>04 — Why us</Label>
+                <Label>Why us</Label>
                 <div className="mt-8 space-y-9">
                   {[
                     ["Agencies report hours.", "We report pipeline."],
@@ -440,7 +445,7 @@ export default function Landing() {
         <section id="proof" data-forge="7:8" className="relative py-28 md:py-36">
           <div className="mx-auto w-full max-w-[1180px] px-5 md:px-8">
             <div data-repel className="scrim">
-              <Label>05 — Proof</Label>
+              <Label>Proof</Label>
               <h2 data-reveal className="text-shadow-editorial mt-6 max-w-[22ch] font-display font-bold leading-[1.02] tracking-[-0.02em]" style={{ fontSize: "clamp(2rem, 4.6vw, 3.4rem)" }}>
                 Who we’ve been in the <span style={{ color: ACCENT }}>engine room</span> with.
               </h2>
@@ -468,7 +473,7 @@ export default function Landing() {
             <div data-repel className="scrim mt-12 max-w-[46rem]">
               <p data-reveal className="max-w-[56ch] text-[17px] leading-[1.7] text-[#C9C7BF]">
                 First for our anchor client SupperClub, now across every engagement — we stand up
-                the outbound engine, the targeting, and the corporate-membership pipeline. The meetings land.
+                the outbound engine, the targeting, and the B2B pipeline. The meetings land.
               </p>
               <div data-reveal className="glow-grid mt-8 grid gap-px overflow-hidden border border-[#26262A] bg-[#26262A] sm:grid-cols-3">
                 {[
@@ -477,7 +482,7 @@ export default function Landing() {
                   ["16", "", "corporate targets in live pipeline"],
                 ].map(([n, suffix, d]) => (
                   <div key={d} className="glow-cell bg-[#0B0B0C]/80 p-6">
-                    <div data-count={n} data-suffix={suffix} className="font-display text-3xl font-bold tracking-tight md:text-4xl" style={{ color: ACCENT }}>{n}{suffix}</div>
+                    <div data-count={n} data-suffix={suffix} className="tnum font-display text-3xl font-bold tracking-tight md:text-4xl" style={{ color: ACCENT }}>{n}{suffix}</div>
                     <p className="mt-2 text-[15px] leading-[1.65] text-[#B3B1A8]">{d}</p>
                   </div>
                 ))}
@@ -493,7 +498,7 @@ export default function Landing() {
         <section data-forge="8:8.2" className="relative py-28 md:py-36">
           <div className="mx-auto w-full max-w-[1180px] px-5 md:px-8">
             <div data-repel className="scrim max-w-[44rem]">
-              <Label>06 — Who it’s for</Label>
+              <Label>Who it’s for</Label>
               <h2 data-reveal className="text-shadow-editorial mt-6 max-w-[24ch] font-display font-bold leading-[1.02] tracking-[-0.02em]" style={{ fontSize: "clamp(2rem, 5vw, 3.4rem)" }}>
                 UAE companies <span className="text-[#A5A39B]">behind on AI.</span>
               </h2>
@@ -516,7 +521,7 @@ export default function Landing() {
               <div className="mt-8 space-y-1">
                 {[
                   ["Why not just hire a BD person?", "A senior BD hire in the UAE runs well past our retainer once you add ramp time, tooling, and management. The engine arrives built and run for you — and if it does not fit, you stop. No severance, no rehiring cycle."],
-                  ["How fast do we see something real?", "The revenue teardown lands before any commitment. Once we start, the first verified buyer lists and live outreach move in weeks, not quarters — you watch the pipeline fill in the same tracker we work from."],
+                  ["How fast do we see something real?", "The deep dive session lands before any commitment. Once we start, the first verified buyer lists and live outreach move in weeks, not quarters — you watch the pipeline fill in the same tracker we work from."],
                   ["What do you need from us?", "One decision-maker, roughly an hour a week, and honest answers about who your best customers are. We handle the rest — lists, sequences, tooling, follow-up discipline."],
                   ["Are we locked in?", "No long lock-in. The work compounds, so clients stay because it works — and everything built for you, the lists, the sequences, the map, stays yours."],
                   ["Does AI mean automated spam?", "The opposite. AI does the mapping and the grunt work; every message ships in your voice, aimed at a verified decision-maker, reviewed before it leaves. Volume without spray."],
@@ -545,13 +550,13 @@ export default function Landing() {
                 A 20-minute call: we map where your revenue is leaking and what we’d
                 build first. You keep the map. No deck. No pitch theater.
               </p>
-              <a data-reveal data-cta-heat href="mailto:a.shaheen7853@gmail.com?subject=PropelBD%20%E2%80%94%20Revenue%20teardown" className="mt-10 inline-flex items-center gap-2 px-8 py-4 font-mono text-[13px] uppercase tracking-[0.14em] text-[#0B0B0C] transition-transform duration-200 hover:-translate-y-0.5 cursor-pointer" style={{ backgroundColor: ACCENT }}>
-                Book a free revenue teardown →
+              <a data-reveal data-cta-heat href="mailto:a.shaheen7853@gmail.com?subject=PropelBD%20%E2%80%94%20Deep%20dive%20session" className="mt-10 inline-flex items-center gap-2 px-8 py-4 font-mono text-[13px] uppercase tracking-[0.14em] text-[#0B0B0C] transition-transform duration-200 hover:-translate-y-0.5 cursor-pointer" style={{ backgroundColor: ACCENT }}>
+                Book a deep dive session →
               </a>
               <p data-reveal className="mt-8 text-[15px] leading-[1.65] text-[#AEACA3]">
                 The people who build your engine run your engine — and answer for it.
               </p>
-              <p data-reveal className="mt-3 font-mono text-[12px] uppercase tracking-[0.18em] text-[#77756D]">
+              <p data-reveal className="mt-3 font-mono text-[12px] uppercase tracking-[0.18em] text-[#8B897F]">
                 Replies within one business day
               </p>
             </div>

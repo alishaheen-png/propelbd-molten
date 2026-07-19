@@ -18,7 +18,7 @@ export default function Privacy() {
         <p><strong className="text-[#ECEAE3]">This site sets no cookies and runs no tracking.</strong> No analytics scripts, no pixels, no fingerprinting. Your visit is your business.</p>
         <p>If you email us, we use your email address and what you write to reply to you and, if we end up working together, to do the work. We do not sell, rent, or share your details with anyone.</p>
         <p>Want anything we hold about you deleted? One email: <a className="underline underline-offset-4" href="mailto:a.shaheen7853@gmail.com">a.shaheen7853@gmail.com</a>.</p>
-        <p className="pt-4 font-mono text-[12px] uppercase tracking-[0.16em] text-[#77756D]">PropelBD · Dubai · Abu Dhabi · Last updated July 2026</p>
+        <p className="pt-4 font-mono text-[12px] uppercase tracking-[0.16em] text-[#8B897F]">PropelBD · Dubai · Abu Dhabi · Last updated July 2026</p>
       </div>
     </main>
   );
