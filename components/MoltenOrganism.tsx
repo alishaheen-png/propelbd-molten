@@ -285,6 +285,58 @@ const FIELD_VERT = /* glsl */ `
   void main() { gl_Position = vec4(position, 1.0); }
 `;
 
+/* ---- THE FORGE-STONE — one crafted hero object, not particle soup ----
+   A single lumped-obsidian orb with a molten crack network and a fixed
+   view-space key light (real diffuse + specular + fresnel rim), floating
+   right of the hero text column. This is the ONE elite addition (silk-
+   atlas doctrine: one photoreal hero object with clear shape identity).
+   Lives only through the hero chapter — fades out as the Problem chapter
+   takes over (uOpacity, driven by the existing uPhase scroll rig). */
+const ORB_VERT = /* glsl */ `
+  attribute float aCrack;
+  varying float vCrack;
+  varying vec3 vNormal;
+  varying vec3 vViewPosition;
+  void main() {
+    vCrack = aCrack;
+    vNormal = normalize(normalMatrix * normal);
+    vec4 mv = modelViewMatrix * vec4(position, 1.0);
+    vViewPosition = -mv.xyz;
+    gl_Position = projectionMatrix * mv;
+  }
+`;
+
+const ORB_FRAG = /* glsl */ `
+  uniform float uTime;
+  uniform float uOpacity;
+  uniform vec3 uBase;
+  uniform vec3 uMid;
+  uniform vec3 uHot;
+  uniform vec3 uLightDir;
+  varying float vCrack;
+  varying vec3 vNormal;
+  varying vec3 vViewPosition;
+
+  void main() {
+    vec3 N = normalize(vNormal);
+    vec3 V = normalize(vViewPosition);
+    vec3 L = normalize(uLightDir);
+    float diff = max(dot(N, L), 0.0);
+    vec3 H = normalize(L + V);
+    float spec = pow(max(dot(N, H), 0.0), 42.0);
+    float fresnel = pow(1.0 - max(dot(N, V), 0.0), 2.6);
+
+    // molten crack veins — slow ember flicker, never a uniform pulse
+    float flick = 0.72 + 0.28 * sin(uTime * 1.7 + vCrack * 34.0);
+    vec3 crackCol = mix(uMid, uHot, smoothstep(0.45, 1.0, vCrack)) * vCrack * flick * 2.1;
+
+    vec3 base = uBase * (0.24 + diff * 0.66);
+    vec3 col = base + crackCol + fresnel * uMid * 0.5 + spec * uHot * 0.85;
+
+    gl_FragColor = vec4(col, uOpacity);
+  }
+`;
+
 /* ---------------- formation bakery (runs once at mount) ---------------- */
 
 function bakeFormations(count: number, texW: number, rows: number) {
@@ -422,6 +474,56 @@ function bakeFormations(count: number, texW: number, rows: number) {
   return data;
 }
 
+/* bakes a bumpy obsidian orb: displaced icosahedron + a per-vertex crack-vein
+   channel (ridged value-noise, isolated to thin high-contrast bands so it
+   reads as glowing fissures, not a mottled surface). One-time CPU cost. */
+function bakeEmberOrb(radius: number, detail: number) {
+  const geo = new THREE.IcosahedronGeometry(radius, detail);
+  const pos = geo.attributes.position;
+  const v = new THREE.Vector3();
+
+  const hash3 = (x: number, y: number, z: number) => {
+    const s = Math.sin(x * 127.1 + y * 311.7 + z * 74.7) * 43758.5453123;
+    return s - Math.floor(s);
+  };
+  const noise3 = (x: number, y: number, z: number) => {
+    const xi = Math.floor(x), yi = Math.floor(y), zi = Math.floor(z);
+    const xf = x - xi, yf = y - yi, zf = z - zi;
+    const u = xf * xf * (3 - 2 * xf), w = yf * yf * (3 - 2 * yf), t = zf * zf * (3 - 2 * zf);
+    const c000 = hash3(xi, yi, zi), c100 = hash3(xi + 1, yi, zi);
+    const c010 = hash3(xi, yi + 1, zi), c110 = hash3(xi + 1, yi + 1, zi);
+    const c001 = hash3(xi, yi, zi + 1), c101 = hash3(xi + 1, yi, zi + 1);
+    const c011 = hash3(xi, yi + 1, zi + 1), c111 = hash3(xi + 1, yi + 1, zi + 1);
+    const x00 = THREE.MathUtils.lerp(c000, c100, u), x10 = THREE.MathUtils.lerp(c010, c110, u);
+    const x01 = THREE.MathUtils.lerp(c001, c101, u), x11 = THREE.MathUtils.lerp(c011, c111, u);
+    const y0 = THREE.MathUtils.lerp(x00, x10, w), y1 = THREE.MathUtils.lerp(x01, x11, w);
+    return THREE.MathUtils.lerp(y0, y1, t);
+  };
+  const fbm3 = (x: number, y: number, z: number) => {
+    let val = 0, amp = 0.5, freq = 1;
+    for (let i = 0; i < 4; i++) { val += amp * noise3(x * freq, y * freq, z * freq); freq *= 2.02; amp *= 0.5; }
+    return val;
+  };
+
+  const crack = new Float32Array(pos.count);
+  for (let i = 0; i < pos.count; i++) {
+    v.fromBufferAttribute(pos, i);
+    const n = v.clone().normalize();
+    // gentle rock-like bump — restrained, reads as a smooth crafted form, not a mosaic
+    const bump = fbm3(n.x * 1.8, n.y * 1.8, n.z * 1.8);
+    v.copy(n).multiplyScalar(radius * (1 + (bump - 0.5) * 0.045));
+    pos.setXYZ(i, v.x, v.y, v.z);
+
+    // thin drifting cracks only (same tight ridge-mask as the depth field's
+    // vein term below) — a few glowing seams, never a full-surface pattern
+    const ridge = 1 - Math.abs(2 * fbm3(n.x * 2.6 + 9, n.y * 2.6 + 9, n.z * 2.6 + 9) - 1);
+    crack[i] = Math.pow(Math.max(0, (ridge - 0.88) / 0.115), 3.0);
+  }
+  geo.setAttribute("aCrack", new THREE.BufferAttribute(crack, 1));
+  geo.computeVertexNormals();
+  return geo;
+}
+
 /* ---------------- component ---------------- */
 
 export default function MoltenOrganism() {
@@ -545,6 +647,33 @@ export default function MoltenOrganism() {
     field.frustumCulled = false;
     field.renderOrder = -1;
     scene.add(field);
+
+    // THE FORGE-STONE — one crafted hero object (see ORB_VERT/ORB_FRAG doc above)
+    const orbGeo = bakeEmberOrb(1.2, isCoarse ? 3 : 4);
+    const orbUniforms = {
+      uTime: uniforms.uTime,
+      uOpacity: { value: 0 },
+      uBase: { value: new THREE.Color(0.075, 0.05, 0.045) },
+      uMid: { value: new THREE.Color("#FF5A1F") },
+      uHot: { value: new THREE.Color("#FF8A4C") },
+      uLightDir: { value: new THREE.Vector3(0.5, 0.75, 0.85).normalize() },
+    };
+    const orbMat = new THREE.ShaderMaterial({
+      vertexShader: ORB_VERT,
+      fragmentShader: ORB_FRAG,
+      uniforms: orbUniforms,
+      transparent: true,
+      depthWrite: true,
+      depthTest: true,
+    });
+    const orb = new THREE.Mesh(orbGeo, orbMat);
+    orb.renderOrder = 1; // draw after the ember field so it reads as a solid form the embers drift around
+    orb.position.set(1.85, 0.12, -0.4);
+    // desktop/tablet only — a solid shape has nowhere to sit on a single-column
+    // mobile hero without colliding with the text; mobile keeps the existing
+    // restrained dust field (matches the file's established mobile convention
+    // of centering formations behind text rather than docking them beside it)
+    if (!isCoarse) scene.add(orb);
 
     /* ---- scroll → phase: one trigger per forged chapter ---- */
     // sections declare data-forge="<startPhase>:<endPhase>"
@@ -676,6 +805,16 @@ export default function MoltenOrganism() {
 
       if ((frame++ & 3) === 0) updateRepel(); // layout read throttled to every 4th frame
 
+      // THE FORGE-STONE — idle spin + subtle scroll/mouse reaction, then
+      // fades out as the Problem chapter takes the stage (never lingers
+      // past the hero — one object, one chapter, restraint over spectacle)
+      const heroFade = 1 - THREE.MathUtils.smoothstep(uniforms.uPhase.value, 0.5, 0.95);
+      orbUniforms.uOpacity.value = isCoarse ? 0 : uniforms.uIgnite.value * heroFade;
+      orb.rotation.y = uniforms.uTime.value * 0.1 + uniforms.uPhase.value * 0.5;
+      orb.rotation.x = Math.sin(uniforms.uTime.value * 0.09) * 0.09 + uniforms.uMouse.value.y * 0.025;
+      orb.rotation.z = uniforms.uMouse.value.x * 0.018;
+      orb.position.y = 0.12 + Math.sin(uniforms.uTime.value * 0.32) * 0.09;
+
       // one continuous camera take: slow dolly + breathe, phase-aware drift
       const p = uniforms.uPhase.value;
       camera.position.z = 7.2 - Math.min(p, 2) * 0.35 + Math.sin(uniforms.uTime.value * 0.11) * 0.1;
@@ -726,6 +865,7 @@ export default function MoltenOrganism() {
       canvas.removeEventListener("webglcontextlost", onLost);
       canvas.removeEventListener("webglcontextrestored", onRestored);
       geo.dispose(); mat.dispose(); fieldGeo.dispose(); fieldMat.dispose(); formTex.dispose();
+      orbGeo.dispose(); orbMat.dispose();
       renderer.dispose();
       if (canvas.parentElement === el) el.removeChild(canvas);
     };
