@@ -673,7 +673,11 @@ export default function MoltenOrganism() {
     // mobile hero without colliding with the text; mobile keeps the existing
     // restrained dust field (matches the file's established mobile convention
     // of centering formations behind text rather than docking them beside it)
-    if (!isCoarse) scene.add(orb);
+    // ORB RETIRED (kept for rollback): the procedural forge-stone is replaced by
+    // the photoreal frame-sequence scrub (components/ForgeSequence.tsx). Flip to
+    // true to restore the WebGL orb.
+    const ORB_ENABLED = false;
+    if (!isCoarse && ORB_ENABLED) scene.add(orb);
 
     /* ---- scroll → phase: one trigger per forged chapter ---- */
     // sections declare data-forge="<startPhase>:<endPhase>"
