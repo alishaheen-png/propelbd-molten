@@ -317,7 +317,7 @@ export default function Landing() {
                 </a>
               </div>
               <p data-hero className="mt-9 border-t border-[#1C1C1F] pt-5 font-mono text-[12px] uppercase leading-[2] tracking-[0.14em] text-[#A5A39B]">
-                <span className="text-[#ECEAE3]">10,000+</span> leads generated for clients · <span className="text-[#ECEAE3]">6+</span> deals closed across engagements · <span className="text-[#ECEAE3]">verified</span> pipeline, not scraped
+                Anchor client <span className="text-[#ECEAE3]">SupperClub Middle East</span> · engine <span className="text-[#ECEAE3]">built, proven, run</span> · <span className="text-[#ECEAE3]">verified</span> pipeline, not scraped
               </p>
             </div>
           </div>
@@ -400,8 +400,8 @@ export default function Landing() {
                 The engine, installed. <span style={{ color: ACCENT }}>You keep the map</span> either way.
               </h2>
               <p data-reveal className="mt-5 max-w-[56ch] text-[16px] leading-[1.7] text-[#AEACA3]">
-                Built, deployed, tested and proven: 10,000+ leads generated for clients
-                and 6+ deals closed across our engagements.
+                Built, deployed, tested and proven with our anchor client, the engine
+                runs live, not as a slide.
               </p>
               <div className="mt-10 space-y-5">
                 {[
