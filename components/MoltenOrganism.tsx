@@ -94,9 +94,15 @@ const VERT = /* glsl */ `
     // organic drift — violent in scatter + scroll turbulence, calm in formations.
     // scatter amp raised + a second de-phased octave so between-slide states stay
     // haphazard and never settle into an outline of the next block (Ali).
-    float amp = 0.08 + inDust * 0.14 + inScatter * 0.72 + uTurb * 0.55;
+    // dust (hero/idle) chaos raised (0.14->0.21) + scroll-turbulence response raised
+    // (0.55->0.68) — the beloved chaotic-red-dots field stays MORE alive at rest and
+    // reacts harder to scroll, never calmer (Ali: push the chaos harder, never tame it).
+    float amp = 0.08 + inDust * 0.21 + inScatter * 0.72 + uTurb * 0.68;
     pos += drift(pos * 0.9 + aSeed * 6.2831, uTime * (0.16 + inScatter * 0.42 + uTurb * 0.4)) * amp;
     pos += drift(pos * 1.7 + aSeed * 11.3, uTime * (0.31 + inScatter * 0.5)) * (inScatter * 0.34 + uTurb * 0.18);
+    // second-octave buzz — small-scale, fast, dust-only: gives idle embers a living
+    // micro-jitter texture instead of one smooth drift wave (never touches other phases)
+    pos += drift(pos * 2.4 + aSeed * 19.7, uTime * (0.52 + inDust * 0.4)) * inDust * 0.07;
 
     // scatter chaos: NO synchronized gather (that read as an order-forming shape).
     // per-particle phase = pure entropy, tiny push only, never a clean contraction.
@@ -137,8 +143,18 @@ const VERT = /* glsl */ `
     float inEngine = smoothstep(1.8, 2.2, uPhase) * (1.0 - smoothstep(6.6, 7.2, uPhase));
     vPulse = smoothstep(0.0, 0.05, phase) * (1.0 - smoothstep(0.05, 0.2, phase)) * inEngine;
 
-    float flicker = 0.82 + 0.18 * sin(uTime * (1.4 + hash(aSeed) * 2.6) + aSeed * 40.0);
-    vHeat = clamp(bright * flicker + push * 0.7 + uCtaHeat * inVortex * 0.5, 0.0, 3.0);
+    // two-octave flicker: base breathing + a faster dust-only second octave so the
+    // idle ember field reads as richer/more organic instead of one uniform pulse.
+    float flicker = 0.78 + 0.16 * sin(uTime * (1.4 + hash(aSeed) * 2.6) + aSeed * 40.0)
+                         + 0.10 * inDust * sin(uTime * (3.3 + hash(aSeed * 3.1) * 4.0) + aSeed * 91.0);
+
+    // rare per-particle spark flares — chaotic hot-spots that strobe unpredictably,
+    // biased toward the dust/hero field (Ali's "chaotic red dots", pushed harder).
+    float sparkPhase = fract(hash(node * 3.17) + uTime * 0.05);
+    float spark = smoothstep(0.0, 0.02, sparkPhase) * (1.0 - smoothstep(0.02, 0.09, sparkPhase))
+                  * (0.3 + inDust * 0.7);
+
+    vHeat = clamp(bright * flicker + push * 0.7 + uCtaHeat * inVortex * 0.5 + spark * 1.5 + uTurb * 0.5, 0.0, 3.0);
 
     // cooling transit: the engine dims while it dissolves toward the split
     // (heat = meaning; also keeps mid-morph glare off the Why text)
@@ -162,10 +178,14 @@ const VERT = /* glsl */ `
     }
     gl_Position = clip;
 
-    // fake DOF: distance dims, never balloons (big blurred points read as blobs)
+    // fake DOF: distance dims, never balloons (big blurred points read as blobs).
+    // guard: a particle landing exactly on the camera's view-space z=0 plane would
+    // divide by zero (gstack_free P1) — clamp the divisor away from zero, invisible
+    // in practice (points are always meaningfully in front of/behind the camera).
     float focus = smoothstep(3.0, 9.5, -mv.z);
+    float safeDepth = max(abs(-mv.z), 0.05);
     gl_PointSize = aSize * uPixelRatio * uPerf * (1.0 + vPulse * 2.4 + push * 1.4 + uIgnite * 0.15)
-                   * (5.4 / -mv.z) * (1.0 + focus * 0.4);
+                   * (5.4 / safeDepth) * (1.0 + focus * 0.4);
     vHeat *= 1.0 - focus * 0.5;
   }
 `;
@@ -271,9 +291,18 @@ function bakeFormations(count: number, texW: number, rows: number) {
   for (let i = 0; i < count; i++) {
     const r01 = Math.random();
 
-    // 0 DUST — cold ember dust, deep-Z spread
-    set(0, i, gauss() * 5.6, gauss() * 3.2, gauss() * 3.4 - 0.6,
-      Math.random() < 0.16 ? 0.7 + Math.random() * 0.45 : 0.12 + Math.pow(Math.random(), 3) * 0.26);
+    // 0 DUST — cold ember dust, deep-Z spread. Widened + a rare hot-spark tier so
+    // the hero's chaotic-red-dots field reads richer (Ali's favorite — pushed
+    // harder, never tamed): 3% standout flares, ~19% mid embers, rest dim ash.
+    {
+      const rSpark = Math.random();
+      const w = rSpark < 0.03
+        ? 1.05 + Math.random() * 0.55
+        : rSpark < 0.22
+        ? 0.65 + Math.random() * 0.5
+        : 0.12 + Math.pow(Math.random(), 3) * 0.26;
+      set(0, i, gauss() * 5.9, gauss() * 3.35, gauss() * 3.5 - 0.6, w);
+    }
 
     // 1 SCATTER — entropy peak, mostly ash with dying embers
     set(1, i, gauss() * 6.4, gauss() * 4.0, gauss() * 3.2 - 0.6,
@@ -473,7 +502,7 @@ export default function MoltenOrganism() {
       uRepel: { value: [new THREE.Vector4(0, 0, 0, 0), new THREE.Vector4(0, 0, 0, 0), new THREE.Vector4(0, 0, 0, 0)] },
       uCool: { value: new THREE.Color("#621307") },
       uMid: { value: new THREE.Color("#FF5A1F") },
-      uHot: { value: new THREE.Color("#FF9B5E") }, // hot orange — no gold/yellow drift
+      uHot: { value: new THREE.Color("#FF8A4C") }, // locked ember-hot token (MOLTEN_DESIGN.md) — no gold/yellow drift
     };
 
     const mat = new THREE.ShaderMaterial({

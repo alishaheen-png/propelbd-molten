@@ -216,7 +216,7 @@ a[data-cta-heat]:hover { transform: translateY(-2px) scale(1.015); box-shadow: 0
 .ignite.ignited .forge-char:nth-child(3n) { animation-delay: 1.3s; }
 @keyframes ember-breathe {
   0%, 100% { text-shadow: 0 0 46px rgba(255,90,31,0.55), 0 0 12px rgba(255,90,31,0.7); }
-  50%      { text-shadow: 0 0 60px rgba(255,90,31,0.75), 0 0 18px rgba(255,90,31,0.85); }
+  50%      { text-shadow: 0 0 68px rgba(255,90,31,0.8), 0 0 22px rgba(255,90,31,0.9); }
 }
 
 /* preloader chars inherit display font; bar scales via GSAP */

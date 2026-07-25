@@ -627,7 +627,8 @@ export default function Landing() {
                 A 20-minute call: we map where your revenue is leaking and what we’d
                 build first. You keep the map. No deck. No pitch theater.
               </p>
-              <a data-reveal data-cta-heat data-magnetic href="mailto:a.shaheen7853@gmail.com?subject=PropelBD%20%E2%80%94%20Deep%20dive%20session" className="mt-10 inline-flex items-center gap-2 px-8 py-4 font-mono text-[13px] uppercase tracking-[0.14em] text-[#0B0B0C] transition-transform duration-200 hover:-translate-y-0.5 cursor-pointer" style={{ backgroundColor: ACCENT }}>
+              {/* Primary booking action. Placeholder Cal.com link — Ali swaps the real URL. */}
+              <a data-reveal data-cta-heat data-magnetic href="https://cal.com/propelbd/deep-dive" target="_blank" rel="noopener noreferrer" className="mt-10 inline-flex items-center gap-2 px-8 py-4 font-mono text-[13px] uppercase tracking-[0.14em] text-[#0B0B0C] transition-transform duration-200 hover:-translate-y-0.5 cursor-pointer" style={{ backgroundColor: ACCENT }}>
                 Book a deep dive session →
               </a>
               <p data-reveal className="mt-8 text-[15px] leading-[1.65] text-[#AEACA3]">
