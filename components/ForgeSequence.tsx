@@ -41,8 +41,9 @@ export default function ForgeSequence() {
     const dir = small ? "640" : "1080";
     const src = (i: number) => `${BASE}/forge/${dir}/frame_${String(i).padStart(3, "0")}.webp`;
 
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
     const fit = () => {
+      // dpr read per-call: zoom / monitor-swap mid-session keeps the backing store sharp
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
       const s = Math.round(el.clientWidth * dpr);
       if (canvas.width !== s) { canvas.width = s; canvas.height = s; }
     };
@@ -73,8 +74,8 @@ export default function ForgeSequence() {
 
     if (reduce) {
       // static forged poster — the ignited end-state, no motion
-      load(FRAMES - 1).then(() => drawFrame(FRAMES - 1));
-      return;
+      load(FRAMES - 1).then(() => { if (!disposed) drawFrame(FRAMES - 1); });
+      return () => { disposed = true; }; // unmount guard: never draw to a detached canvas
     }
 
     // progressive preload: poster + end, then stride passes, then fill
