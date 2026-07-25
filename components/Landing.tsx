@@ -299,7 +299,7 @@ export default function Landing() {
         <section data-forge="0:0.9" className="relative flex min-h-[100dvh] flex-col justify-center pb-24 pt-28">
           <div className="mx-auto w-full max-w-[1180px] px-5 md:px-8">
             <div data-repel className="scrim max-w-[46rem] py-10">
-              <div data-hero><Label>Fractional AI-BD · Dubai · Abu Dhabi</Label></div>
+              <div data-hero><Label>Fractional AI-BD</Label></div>
               <h1 data-hero aria-label="The revenue engine your business is missing." className="text-shadow-editorial mt-6 font-display font-bold leading-[0.95] tracking-[-0.02em]" style={{ fontSize: "clamp(2.7rem, 8vw, 6.6rem)" }}>
                 The revenue engine<br />your business is<br /><span className="ignite">missing.</span>
               </h1>
