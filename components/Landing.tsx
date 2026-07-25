@@ -17,7 +17,6 @@ import Lenis from "lenis";
    plain readable page (globals.css). */
 
 const MoltenOrganism = dynamic(() => import("./MoltenOrganism"), { ssr: false });
-const ForgeSequence = dynamic(() => import("./ForgeSequence"), { ssr: false });
 
 const ACCENT = "#FF5A1F";
 const BASE = process.env.NEXT_PUBLIC_BASE_PATH || "";
@@ -237,15 +236,6 @@ export default function Landing() {
         });
       }
 
-      // scroll-cue fades as the forge scrub begins (it has done its job)
-      const cue = root.current?.querySelector<HTMLElement>(".forge-cue");
-      if (cue) {
-        gsap.to(cue, {
-          opacity: 0, ease: "none",
-          scrollTrigger: { trigger: "#hero-forge", start: "top top", end: () => "+=" + window.innerHeight * 0.45, scrub: true },
-        });
-      }
-
       // CTA molten pulse
       const cta = root.current?.querySelector<HTMLElement>("#contact a[data-cta-heat]");
       if (cta) {
@@ -305,14 +295,9 @@ export default function Landing() {
       </nav>
 
       <main id="top" className="relative z-10">
-        {/* ============ HERO — DUST + THE FORGE-STONE SCRUB ============
-            The hero is now a scrub chapter: 260vh of scroll forges the stone
-            (frame-sequence canvas) from dormant obsidian to glowing engine
-            core while the copy holds still. Copy is verbatim-locked. */}
-        <section id="hero-forge" data-forge="0:0.9" className="forge-tall relative h-[260vh]">
-          <div className="forge-sticky sticky top-0 flex h-screen flex-col justify-center pb-24 pt-28">
-          <ForgeSequence />
-          <div className="relative z-10 mx-auto w-full max-w-[1180px] px-5 md:px-8">
+        {/* ============ HERO — DUST ============ */}
+        <section data-forge="0:0.9" className="relative flex min-h-[100dvh] flex-col justify-center pb-24 pt-28">
+          <div className="mx-auto w-full max-w-[1180px] px-5 md:px-8">
             <div data-repel className="scrim max-w-[46rem] py-10">
               <div data-hero><Label>Fractional AI-BD</Label></div>
               <h1 data-hero aria-label="The revenue engine your business is missing." className="text-shadow-editorial mt-6 font-display font-bold leading-[0.95] tracking-[-0.02em]" style={{ fontSize: "clamp(2.7rem, 8vw, 6.6rem)" }}>
@@ -332,13 +317,12 @@ export default function Landing() {
                 </a>
               </div>
               <p data-hero className="mt-9 border-t border-[#1C1C1F] pt-5 font-mono text-[12px] uppercase leading-[2] tracking-[0.14em] text-[#A5A39B]">
-Anchor client <span className="text-[#ECEAE3]">SupperClub Middle East</span> · engine <span className="text-[#ECEAE3]">built, proven, run</span> · <span className="text-[#ECEAE3]">verified</span> pipeline, not scraped
+                <span className="text-[#ECEAE3]">10,000+</span> leads generated for clients · <span className="text-[#ECEAE3]">6+</span> deals closed across engagements · <span className="text-[#ECEAE3]">verified</span> pipeline, not scraped
               </p>
             </div>
           </div>
-          <div aria-hidden className="forge-cue pointer-events-none absolute bottom-5 left-1/2 -translate-x-1/2 font-mono text-[11px] uppercase tracking-[0.3em] text-[#8B897F]">
+          <div aria-hidden className="pointer-events-none absolute bottom-5 left-1/2 -translate-x-1/2 font-mono text-[11px] uppercase tracking-[0.3em] text-[#8B897F]">
             Scroll to forge
-          </div>
           </div>
         </section>
 
@@ -416,8 +400,8 @@ Anchor client <span className="text-[#ECEAE3]">SupperClub Middle East</span> · 
                 The engine, installed. <span style={{ color: ACCENT }}>You keep the map</span> either way.
               </h2>
               <p data-reveal className="mt-5 max-w-[56ch] text-[16px] leading-[1.7] text-[#AEACA3]">
-                Built, deployed, tested and proven with our anchor client — the engine
-                runs, and it compounds.
+                Built, deployed, tested and proven: 10,000+ leads generated for clients
+                and 6+ deals closed across our engagements.
               </p>
               <div className="mt-10 space-y-5">
                 {[
@@ -523,8 +507,8 @@ Anchor client <span className="text-[#ECEAE3]">SupperClub Middle East</span> · 
               </p>
               <div data-reveal className="glow-grid mt-8 grid gap-px overflow-hidden border border-[#26262A] bg-[#26262A] sm:grid-cols-3">
                 {[
-                  ["1", "", "anchor client — SupperClub Middle East"],
-                  ["5", "", "engine parts, built to run as one"],
+                  ["10000", "+", "verified leads generated for clients"],
+                  ["6", "+", "deals closed across engagements"],
                   ["16", "", "corporate targets in live pipeline"],
                 ].map(([n, suffix, d]) => (
                   <div key={d} className="glow-cell bg-[#0B0B0C]/80 p-6">
