@@ -85,17 +85,6 @@ button:focus-visible {
 .beat-tick.filled { background-color: #FF5A1F !important; }
 .beat-tick.active { box-shadow: 0 0 12px rgba(255, 90, 31, 0.8); }
 
-/* pointer-following ember glow on proof cells (hand-rolled, no lib) */
-.glow-cell { position: relative; overflow: hidden; }
-.glow-cell::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(220px circle at var(--gx, -300px) var(--gy, -300px), rgba(255, 90, 31, 0.13), transparent 65%);
-  pointer-events: none;
-  transition: opacity 0.3s;
-}
-
 /* molten ring border on the close (hand-rolled conic sweep, no canvas) */
 @property --ember-angle {
   syntax: "<angle>";
@@ -123,7 +112,6 @@ button:focus-visible {
 
 @media (prefers-reduced-motion: reduce) {
   .ember-border::after { animation: none; }
-  .glow-cell::after { display: none; }
 }
 .forge-word { display: inline-block; white-space: nowrap; }
 
@@ -201,14 +189,9 @@ a[data-cta-heat]:hover { transform: translateY(-2px) scale(1.015); box-shadow: 0
 .vs-us { color: #0B0B0C; background: #FF5A1F; font-weight: 700; }
 
 /* ── cinematic layer (2026-07-19 layers-rebuild) ─────────────────────────── */
-
-/* cursor ember: faint warm spot trailing a fine pointer; pure decoration */
-.cursor-ember {
-  width: 340px; height: 340px; margin: -170px 0 0 -170px;
-  background: radial-gradient(circle, rgba(255,90,31,0.10) 0%, rgba(255,90,31,0.035) 38%, transparent 68%);
-  mix-blend-mode: screen; will-change: transform;
-}
-@media (pointer: coarse) { .cursor-ember { display: none; } }
+/* (DOM cursor-ember trail cut 2026-07-25 v2 restraint pass — the WebGL organism's
+   own uMouse/uMouseUV swirl + field heat bloom is the real cursor reaction now;
+   a second CSS-layer copy competed with it instead of reinforcing it.) */
 
 /* ignited hero word: after the ignite timeline lands, the metal keeps breathing */
 .ignite.ignited .forge-char { animation: ember-breathe 3.2s ease-in-out infinite; }
@@ -223,7 +206,6 @@ a[data-cta-heat]:hover { transform: translateY(-2px) scale(1.015); box-shadow: 0
 .preloader { clip-path: inset(0 0 0 0); }
 
 @media (prefers-reduced-motion: reduce) {
-  .cursor-ember { display: none; }
   .preloader { display: none !important; }
   .ignite.ignited .forge-char { animation: none; }
 }

@@ -125,11 +125,19 @@ const VERT = /* glsl */ `
     float constWin  = smoothstep(7.3, 7.9, uPhase) * (1.0 - smoothstep(7.95, 8.15, uPhase));   // fully home before FAQ (8.2)
     pos.x += (engineWin + constWin) * uShiftX;
 
-    // mouse: molten repulsion
+    // mouse: living reaction, not a static push — the field is drawn toward the
+    // hand's draft then swept around it (real embers near a moving object), never
+    // a clean repel-only vector. Core holds (never collapses to a point), mid-field
+    // swirls tangentially — this is what turns "reacts to cursor" into "a living
+    // ecosystem" per council verdict (reactive ember physics, the #1 move).
     vec2 toM = pos.xy - uMouse;
     float md = length(toM);
     float push = (1.0 - smoothstep(0.0, 1.5, md)) * uMouseForce;
-    pos.xy += normalize(toM + 0.0001) * push * 0.5;
+    vec2 radial = normalize(toM + 0.0001);
+    vec2 tangent = vec2(-radial.y, radial.x);
+    float swirlW = smoothstep(0.12, 1.5, md);       // 0 at the core, 1 by the rim
+    pos.xy += radial * push * 0.5 * (1.0 - swirlW * 0.65);
+    pos.xy += tangent * push * 0.8 * swirlW;
 
     // hero ignition surge
     pos *= 0.62 + 0.38 * uIgnite;
