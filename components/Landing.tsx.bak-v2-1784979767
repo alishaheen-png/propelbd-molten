@@ -1,10 +1,10 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import dynamic from "next/dynamic";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Lenis from "lenis";
-import { NeuroNoiseHero } from "./molten/NeuroNoiseHero";
 
 /* PropelBD — THE FORGE (v2, alive).
    One WebGL particle organism (MoltenOrganism) lives behind the page and is
@@ -16,6 +16,7 @@ import { NeuroNoiseHero } from "./molten/NeuroNoiseHero";
    site to deploy, not a company card. Reduced-motion: chapters flatten to a
    plain readable page (globals.css). */
 
+const MoltenOrganism = dynamic(() => import("./MoltenOrganism"), { ssr: false });
 
 const ACCENT = "#FF5A1F";
 const BASE = process.env.NEXT_PUBLIC_BASE_PATH || "";
@@ -125,14 +126,44 @@ export default function Landing() {
       nav.to(".ignite .forge-char", { color: ACCENT, textShadow: "0 0 46px rgba(255,90,31,0.55), 0 0 12px rgba(255,90,31,0.7)", duration: 0.9, stagger: 0.04, ease: "power2.out" }, "-=0.5");
       nav.add(() => { document.querySelector(".ignite")?.classList.add("ignited"); });
 
-      // RESTRAINT (council verdict — kill motion competing with the embers):
-      // magnetic CTA-lean, scroll-velocity marquee skew, and a redundant DOM
-      // cursor-trail were cut here. DESIGN.md locks "must NOT move: the wordmark,
-      // the primary CTA" — magnetic lean broke that rule outright. The cursor-ember
-      // DOM div duplicated what the WebGL organism's own uMouse/uMouseUV reactivity
-      // already renders (shader-side swirl + field heat bloom) — one spectacle, not
-      // two. Stillness around the embers is the contrast; the void frames them.
+      // magnetic CTAs — the button leans toward the hand, springs home on leave
+      const magnets = Array.from(root.current?.querySelectorAll<HTMLElement>("[data-magnetic]") || []);
       const magCleanups: (() => void)[] = [];
+      if (!window.matchMedia("(pointer: coarse)").matches) {
+        magnets.forEach((m) => {
+          const qx = gsap.quickTo(m, "x", { duration: 0.35, ease: "power3.out" });
+          const qy = gsap.quickTo(m, "y", { duration: 0.35, ease: "power3.out" });
+          const onEnterMove = (e: PointerEvent) => {
+            const r = m.getBoundingClientRect();
+            qx(((e.clientX - (r.left + r.width / 2)) / r.width) * 14);
+            qy(((e.clientY - (r.top + r.height / 2)) / r.height) * 10);
+          };
+          const onLeave = () => { qx(0); qy(0); };
+          m.addEventListener("pointermove", onEnterMove, { passive: true });
+          m.addEventListener("pointerleave", onLeave, { passive: true });
+          magCleanups.push(() => { m.removeEventListener("pointermove", onEnterMove); m.removeEventListener("pointerleave", onLeave); });
+        });
+      }
+
+      // marquee reacts to scroll velocity — the credential band skews with the
+      // reader's momentum and settles when they settle
+      const track = root.current?.querySelector<HTMLElement>(".marquee-track");
+      if (track) {
+        const skewTo = gsap.quickTo(track, "skewX", { duration: 0.45, ease: "power2.out" });
+        const onVel = () => skewTo(gsap.utils.clamp(-6, 6, lenis.velocity * -0.35));
+        lenis.on("scroll", onVel);
+      }
+
+      // cursor ember — a faint warm spot trailing the hand over the whole page
+      const emberCur = root.current?.querySelector<HTMLElement>(".cursor-ember");
+      if (emberCur && !window.matchMedia("(pointer: coarse)").matches) {
+        const cx = gsap.quickTo(emberCur, "x", { duration: 0.6, ease: "power3.out" });
+        const cy = gsap.quickTo(emberCur, "y", { duration: 0.6, ease: "power3.out" });
+        const onCur = (e: PointerEvent) => { cx(e.clientX); cy(e.clientY); };
+        window.addEventListener("pointermove", onCur, { passive: true });
+        gsap.to(emberCur, { opacity: 1, duration: 1.2, delay: heroDelay + 0.5 });
+        magCleanups.push(() => window.removeEventListener("pointermove", onCur));
+      }
 
       // section reveals — emerge, don't appear; never reverse
       gsap.utils.toArray<HTMLElement>("[data-reveal]").forEach((el) => {
@@ -221,8 +252,21 @@ export default function Landing() {
         });
       }
 
-      // (pointer-following proof-cell glow cut — restraint pass: the numbers carry
-      // the section on typographic weight alone, no competing micro-interaction)
+      // proof stats: pointer-following ember glow (hand-rolled, CSS-var driven)
+      const glowGrid = root.current?.querySelector<HTMLElement>("#proof .glow-grid");
+      let glowCleanup: (() => void) | undefined;
+      if (glowGrid) {
+        const cells = Array.from(glowGrid.querySelectorAll<HTMLElement>(".glow-cell"));
+        const onGlow = (e: PointerEvent) => {
+          cells.forEach((cell) => {
+            const r = cell.getBoundingClientRect();
+            cell.style.setProperty("--gx", `${e.clientX - r.left}px`);
+            cell.style.setProperty("--gy", `${e.clientY - r.top}px`);
+          });
+        };
+        glowGrid.addEventListener("pointermove", onGlow, { passive: true });
+        glowCleanup = () => glowGrid.removeEventListener("pointermove", onGlow);
+      }
 
       // scroll progress hairline (orientation for a long cinematic scroll)
       const prog = root.current?.querySelector<HTMLElement>(".scroll-progress");
@@ -247,6 +291,7 @@ export default function Landing() {
       document.fonts?.ready.then(() => ScrollTrigger.refresh());
 
       return () => {
+        glowCleanup?.();
         magCleanups.forEach((fn) => fn());
         gsap.ticker.remove(ticker);
         lenis.destroy();
@@ -259,7 +304,7 @@ export default function Landing() {
   return (
     <div ref={root} className="relative min-h-screen bg-[#0B0B0C] text-[#ECEAE3] antialiased overflow-clip">
       {/* THE ORGANISM — fixed WebGL canvas behind everything */}
-      <NeuroNoiseHero className="fixed inset-0 z-0" />
+      <MoltenOrganism />
 
       {/* grain + page-edge vignette (focus stays center; buys contrast at margins) */}
       <div aria-hidden className="pointer-events-none fixed inset-0 z-[1] opacity-[0.05] mix-blend-soft-light"
@@ -283,11 +328,14 @@ export default function Landing() {
         </div>
       </div>
 
+      {/* cursor ember — faint warm trail on fine pointers (JS drives, CSS hides on coarse) */}
+      <div aria-hidden className="cursor-ember pointer-events-none fixed left-0 top-0 z-[2] opacity-0" />
+
       {/* NAV */}
       <nav className="fixed inset-x-0 top-0 z-50 border-b border-[#161619] bg-[#0B0B0C]/70 backdrop-blur-md">
         <div className="mx-auto flex max-w-[1180px] items-center justify-between px-5 py-4 md:px-8">
           <a href="#top" className="font-display text-lg font-bold tracking-tight">Propel<span style={{ color: ACCENT }}>BD</span></a>
-          <a href="#contact" className="group inline-flex min-h-[44px] items-center gap-2 border border-[#2A2A2E] px-4 py-2.5 font-mono text-[12px] uppercase tracking-[0.16em] transition-colors duration-200 hover:border-[#FF5A1F] cursor-pointer">
+          <a href="#contact" data-magnetic className="group inline-flex min-h-[44px] items-center gap-2 border border-[#2A2A2E] px-4 py-2.5 font-mono text-[12px] uppercase tracking-[0.16em] transition-colors duration-200 hover:border-[#FF5A1F] cursor-pointer">
             Book a deep dive session <span className="transition-transform group-hover:translate-x-0.5" style={{ color: ACCENT }}>→</span>
           </a>
         </div>
@@ -298,7 +346,7 @@ export default function Landing() {
         <section data-forge="0:0.9" className="relative flex min-h-[100dvh] flex-col justify-center pb-24 pt-28">
           <div className="mx-auto w-full max-w-[1180px] px-5 md:px-8">
             <div data-repel className="scrim max-w-[46rem] py-10">
-              <div data-hero><Label>Fractional AI-BD</Label></div>
+              <div data-hero><Label>Fractional AI-BD · Dubai · Abu Dhabi</Label></div>
               <h1 data-hero aria-label="The revenue engine your business is missing." className="text-shadow-editorial mt-6 font-display font-bold leading-[0.95] tracking-[-0.02em]" style={{ fontSize: "clamp(2.7rem, 8vw, 6.6rem)" }}>
                 The revenue engine<br />your business is<br /><span className="ignite">missing.</span>
               </h1>
@@ -311,12 +359,12 @@ export default function Landing() {
                 prove it works, then it runs.
               </p>
               <div data-hero className="mt-10 flex flex-wrap items-center gap-4">
-                <a href="#contact" className="inline-flex items-center gap-2 px-6 py-3.5 font-mono text-[13px] uppercase tracking-[0.14em] text-[#0B0B0C] transition-transform duration-200 hover:-translate-y-0.5 cursor-pointer" style={{ backgroundColor: ACCENT }}>
+                <a href="#contact" data-magnetic className="inline-flex items-center gap-2 px-6 py-3.5 font-mono text-[13px] uppercase tracking-[0.14em] text-[#0B0B0C] transition-transform duration-200 hover:-translate-y-0.5 cursor-pointer" style={{ backgroundColor: ACCENT }}>
                   Book a deep dive session →
                 </a>
               </div>
               <p data-hero className="mt-9 border-t border-[#1C1C1F] pt-5 font-mono text-[12px] uppercase leading-[2] tracking-[0.14em] text-[#A5A39B]">
-                Anchor client <span className="text-[#ECEAE3]">SupperClub Middle East</span> · engine <span className="text-[#ECEAE3]">built, proven, run</span> · <span className="text-[#ECEAE3]">verified</span> pipeline, not scraped
+                <span className="text-[#ECEAE3]">10,000+</span> leads generated for clients · <span className="text-[#ECEAE3]">6+</span> deals closed across engagements · <span className="text-[#ECEAE3]">verified</span> pipeline, not scraped
               </p>
             </div>
           </div>
@@ -399,8 +447,8 @@ export default function Landing() {
                 The engine, installed. <span style={{ color: ACCENT }}>You keep the map</span> either way.
               </h2>
               <p data-reveal className="mt-5 max-w-[56ch] text-[16px] leading-[1.7] text-[#AEACA3]">
-                Built, deployed, tested and proven with our anchor client, the engine
-                runs live, not as a slide.
+                Built, deployed, tested and proven: 10,000+ leads generated for clients
+                and 6+ deals closed across our engagements.
               </p>
               <div className="mt-10 space-y-5">
                 {[
@@ -432,7 +480,7 @@ export default function Landing() {
                 </p>
               )}
               <div data-reveal className="mt-9 flex flex-wrap items-center gap-5">
-                <a href="#contact" className="inline-flex items-center gap-2 px-6 py-3.5 font-mono text-[13px] uppercase tracking-[0.14em] text-[#0B0B0C] transition-transform duration-200 hover:-translate-y-0.5 cursor-pointer" style={{ backgroundColor: ACCENT }}>
+                <a href="#contact" data-magnetic className="inline-flex items-center gap-2 px-6 py-3.5 font-mono text-[13px] uppercase tracking-[0.14em] text-[#0B0B0C] transition-transform duration-200 hover:-translate-y-0.5 cursor-pointer" style={{ backgroundColor: ACCENT }}>
                   Book a deep dive session →
                 </a>
                 <span className="font-mono text-[12px] uppercase tracking-[0.18em] text-[#A5A39B]">Built once · runs for good</span>
@@ -456,7 +504,7 @@ export default function Landing() {
                     <div key={i} data-reveal className="border-b border-[#1C1C1F] pb-9">
                       <div className="flex items-baseline gap-4">
                         <span className="vs-chip vs-them">Every other agency</span>
-                        <p className="font-display text-lg font-normal leading-[1.2] text-[#8B897F] line-through decoration-[#3A2A20] decoration-2 md:text-xl">{a}</p>
+                        <p className="font-display text-lg font-medium leading-[1.2] text-[#8B897F] line-through decoration-[#3A2A20] decoration-2 md:text-xl">{a}</p>
                       </div>
                       <div className="mt-3 flex items-baseline gap-4">
                         <span className="vs-chip vs-us">PropelBD</span>
@@ -504,8 +552,9 @@ export default function Landing() {
                 First for our anchor client SupperClub, now across every engagement — we stand up
                 the outbound engine, the targeting, and the B2B pipeline. The meetings land.
               </p>
-              <div data-reveal className="glow-grid mt-8 grid gap-px overflow-hidden border border-[#26262A] bg-[#26262A] sm:grid-cols-2">
+              <div data-reveal className="glow-grid mt-8 grid gap-px overflow-hidden border border-[#26262A] bg-[#26262A] sm:grid-cols-3">
                 {[
+                  ["10000", "+", "verified leads generated for clients"],
                   ["6", "+", "deals closed across engagements"],
                   ["16", "", "corporate targets in live pipeline"],
                 ].map(([n, suffix, d]) => (
@@ -579,7 +628,7 @@ export default function Landing() {
                 build first. You keep the map. No deck. No pitch theater.
               </p>
               {/* Primary booking action. Placeholder Cal.com link — Ali swaps the real URL. */}
-              <a data-reveal data-cta-heat href="https://cal.com/propelbd/deep-dive" target="_blank" rel="noopener noreferrer" className="mt-10 inline-flex items-center gap-2 px-8 py-4 font-mono text-[13px] uppercase tracking-[0.14em] text-[#0B0B0C] transition-transform duration-200 hover:-translate-y-0.5 cursor-pointer" style={{ backgroundColor: ACCENT }}>
+              <a data-reveal data-cta-heat data-magnetic href="https://cal.com/propelbd/deep-dive" target="_blank" rel="noopener noreferrer" className="mt-10 inline-flex items-center gap-2 px-8 py-4 font-mono text-[13px] uppercase tracking-[0.14em] text-[#0B0B0C] transition-transform duration-200 hover:-translate-y-0.5 cursor-pointer" style={{ backgroundColor: ACCENT }}>
                 Book a deep dive session →
               </a>
               <p data-reveal className="mt-8 text-[15px] leading-[1.65] text-[#AEACA3]">

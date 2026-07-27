@@ -1,10 +1,10 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import dynamic from "next/dynamic";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Lenis from "lenis";
-import { NeuroNoiseHero } from "./molten/NeuroNoiseHero";
 
 /* PropelBD — THE FORGE (v2, alive).
    One WebGL particle organism (MoltenOrganism) lives behind the page and is
@@ -16,6 +16,7 @@ import { NeuroNoiseHero } from "./molten/NeuroNoiseHero";
    site to deploy, not a company card. Reduced-motion: chapters flatten to a
    plain readable page (globals.css). */
 
+const MoltenOrganism = dynamic(() => import("./MoltenOrganism"), { ssr: false });
 
 const ACCENT = "#FF5A1F";
 const BASE = process.env.NEXT_PUBLIC_BASE_PATH || "";
@@ -259,7 +260,7 @@ export default function Landing() {
   return (
     <div ref={root} className="relative min-h-screen bg-[#0B0B0C] text-[#ECEAE3] antialiased overflow-clip">
       {/* THE ORGANISM — fixed WebGL canvas behind everything */}
-      <NeuroNoiseHero className="fixed inset-0 z-0" />
+      <MoltenOrganism />
 
       {/* grain + page-edge vignette (focus stays center; buys contrast at margins) */}
       <div aria-hidden className="pointer-events-none fixed inset-0 z-[1] opacity-[0.05] mix-blend-soft-light"
